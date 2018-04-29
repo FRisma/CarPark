@@ -10,7 +10,7 @@ server: main.c parkingManager.c configServer.c runServer.c threadWork.c\
 	$(CC) -o $@ $^
 
 clean:  
-	rm -fv *.o *~ $(TARGETS)
+	rm -rfv *.o *~ $(TARGETS) *.dSYM
 
 test: all
 	./server

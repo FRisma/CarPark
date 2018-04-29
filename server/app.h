@@ -15,11 +15,13 @@
 	typedef struct params {
 		int protocol;
 		int socketDescriptor;
-		char *port;
+		char port[1024];
 	}serverConf;
 
 	// Estructura de datos para los hilos
 	typedef struct data {
+		char *port;
+		int csd;
 	}threadData;
 
 	int parkingManager(char *configFile);

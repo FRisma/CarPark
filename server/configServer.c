@@ -11,11 +11,11 @@
 #include <sys/stat.h>
 
 #define BUFF_SIZE 1024  //El tamaño debe ir acorde al tamanio del archivo que va a leer
-#define debug 0
+#define debug 1
 
 int configServer(char *cfgfile, char *port) {
 
-	if (debug) printf("configServer- cfg: %s\n",cfgfile);
+	if (debug) printf("configServer - cfg: %s\n",cfgfile);
 
 	char buff[BUFF_SIZE];
 	int fd;
@@ -26,6 +26,7 @@ int configServer(char *cfgfile, char *port) {
 		perror ("open");
 		return -1;
 	}
+	if (debug) printf("configServer - fd: %d\n",fd);
 	
 	if (read(fd,buff,sizeof buff) < 0){
 		perror ("read");
@@ -37,18 +38,16 @@ int configServer(char *cfgfile, char *port) {
 		perror("parse");
 		close(fd);
 		return -1;
-	}
-    
+	} 
+	if (debug) printf("configServer - port: %s\n",port);
+	
 	if (strlen(port) < 1) { //Puerto invalido
 		write(STDERR_FILENO,"Puerto invalido\n",16);
 		close(fd);
 		return -1;
 	}
 	port[strlen(port)-1]='\0';
-
 	close(fd);
     
-	if (debug) printf("fd:%d\tport:%s\n",fd,port);
-
 	return 0;
 }
