@@ -1,0 +1,42 @@
+#include "optionsHandler.h"
+
+#include <stdlib.h>
+#include <getopt.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#define debug 1
+
+void optionsHandler (int argc, char* const argv[], configuration *conf) {
+
+    int opt = 0;
+
+    // Argument handling
+    opterr=1;   // Disables getopt() error printing.
+	while ((opt = getopt(argc, argv, "cd:sh")) >= 0 ){ // -c create -d delete -s status -h help
+		switch (opt){
+			case 'c':
+				if (debug) printf("Create a ticket\n");
+				break;
+			case 'd':
+				if (debug) printf("Delete ticket #%s\n", optarg);
+				//strncpy(conf->parkingServerCfgFile, optarg, strnlen(optarg,FILE_PATH_LENGHT)+1);
+				break;
+			case 's':
+				if (debug) printf("Status\n");
+				break;
+			case 'h':
+			case '?':
+				puts("-c ask for a creation of a new ticket -d ask for a ticket number to be finished -s status -h help");
+                exit(EXIT_SUCCESS);
+			default:
+				puts("Sintaxis ambigua. Intente ejecutar con -h para mas detalles");
+                exit(EXIT_SUCCESS);
+		}
+	}
+}
