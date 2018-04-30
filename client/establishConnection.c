@@ -3,10 +3,10 @@
  *
  */
 
-#include "client.h"
-#include "macros.h"
+#include "app.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -14,14 +14,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-int establishConnection(int *sd, file_conf_client *conf){
+int establishConnection(int *sd, clientConf *conf){
 
     struct sockaddr_in serverSock = {0}; //Inicializa la estructura con 0
 
     //Protocolo
     serverSock.sin_addr.s_addr=inet_addr(conf->serverIp);
     serverSock.sin_family=AF_INET;
-    serverSock.sin_port=htons(conf->port);
+    serverSock.sin_port=htons(atoi(conf->port));
     if ( 0 > (*sd=socket(AF_INET,SOCK_STREAM,0)) ) { perror("socket"); return -1; }
     
     if ( 0 != connect(*sd,(struct sockaddr *)&serverSock,sizeof serverSock) ){  //CONNECT Con el servidor

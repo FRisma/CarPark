@@ -4,7 +4,7 @@ CC := gcc $(CFLAGS)
 
 all: $(TARGETS)
 
-client: main.c\
+client: main.c configServer.c establishConnection.c\
 	utils/optionsHandler.c utils/parse.c\
 	socket/ipv4.c socket/ipv6.c socket/unspec.c socket/protocol_handler.c
 	$(CC) -o $@ $^
@@ -16,4 +16,4 @@ test: all
 	./client
 
 strace: all
-	strace -f ./client
+	strace -f ./client -c

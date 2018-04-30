@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define debug 1
+#define debug 0
 
 void optionsHandler (int argc, char* const argv[], configuration *conf) {
 
@@ -18,21 +18,31 @@ void optionsHandler (int argc, char* const argv[], configuration *conf) {
 
     // Argument handling
     opterr=1;   // Disables getopt() error printing.
-	while ((opt = getopt(argc, argv, "cd:sh")) >= 0 ){ // -c create -d delete -s status -h help
+	while ((opt = getopt(argc, argv, "cd:s:h")) >= 0 ){ // -c create -d delete -s status -h help
 		switch (opt){
 			case 'c':
 				if (debug) printf("Create a ticket\n");
+				conf->opt = 'c';
 				break;
 			case 'd':
-				if (debug) printf("Delete ticket #%s\n", optarg);
-				//strncpy(conf->parkingServerCfgFile, optarg, strnlen(optarg,FILE_PATH_LENGHT)+1);
+				if (debug) printf("Delete ticket\n");
+				conf->opt = 'd';
+				if (strlen(optarg) == SLOT_ID_LENGHT) {
+					if (debug) printf("Ticket:%s\n",optarg);
+					strncpy(conf->slotId, optarg, strnlen(optarg,SLOT_ID_LENGHT)+1);
+				}
 				break;
 			case 's':
 				if (debug) printf("Status\n");
+				conf->opt = 's';
+				if (strlen(optarg) == SLOT_ID_LENGHT) {
+					if (debug) printf("Ticket:%s\n",optarg);
+					strncpy(conf->slotId, optarg, strnlen(optarg,SLOT_ID_LENGHT)+1);
+				}
 				break;
 			case 'h':
 			case '?':
-				puts("-c ask for a creation of a new ticket -d ask for a ticket number to be finished -s status -h help");
+				puts("-c ask for a creation of a new ticket -d ask for a ticket number to be finished -s status of a ticket -h help");
                 exit(EXIT_SUCCESS);
 			default:
 				puts("Sintaxis ambigua. Intente ejecutar con -h para mas detalles");
