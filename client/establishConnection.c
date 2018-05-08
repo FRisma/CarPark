@@ -19,7 +19,8 @@ int establishConnection(int *sd, clientConf *conf){
     struct sockaddr_in serverSock = {0}; //Inicializa la estructura con 0
 
     //Protocolo
-    serverSock.sin_addr.s_addr=inet_addr(conf->serverIp);
+    //serverSock.sin_addr.s_addr=inet_addr(conf->serverIp);
+    serverSock.sin_addr.s_addr=inet_addr("127.0.0.1");
     serverSock.sin_family=AF_INET;
     serverSock.sin_port=htons(atoi(conf->port));
     if ( 0 > (*sd=socket(AF_INET,SOCK_STREAM,0)) ) { perror("socket"); return -1; }

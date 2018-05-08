@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define debug 1
+#define debug 0
 
 int main (int argc, char *const argv[]) {
 
@@ -17,28 +17,35 @@ int main (int argc, char *const argv[]) {
 	configuration *conf = (configuration *)malloc(sizeof(configuration));
 	optionsHandler(argc, argv, conf);
 
-	// Chequear el correcto estado de las opciones
-	switch (conf->opt) {
-		case 'c':
-			puts("Creando un ticket");
-			break;
-		case 'd':
-			puts("Eliminando un ticket");
-			break;
-		case 's':
-			puts("Estado de un ticket");
-			break;
-	}
-
 	// Configuro el cliente desde archivo
 	clientConf *servParams = (clientConf *)malloc(sizeof(configuration));
 	configServer("servidor.cfg",servParams->serverIp,servParams->port);
 
 	// Abro conexion con el socket
-//	establishConnection(&socketDescriptor,servParams);
-	
+	//establishConnection(&socketDescriptor,servParams);
+
+	// Hago el trabajo
+	switch (conf->opt) {
+		case 'c':
+			if (debug) puts("Crear");
+			createTicket(socketDescriptor);
+			break;
+		case 'd':
+			if (debug) puts("Eliminar");
+			deleteTicket(socketDescriptor,conf->slotId);
+			break;
+		case 's':
+			if (debug) puts("Status");
+			statusTicket(socketDescriptor,conf->slotId);
+			break;
+	}
+	//char buff[15];
+	//read(socketDescriptor,buff,15);
+	//printf("El server escribio: %s\n",buff);
+
 	// Muero
 	free(conf);
 	free(servParams);
+	puts("Adios");
 	return 0;
 }

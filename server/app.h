@@ -15,7 +15,7 @@
 	typedef struct params {
 		int protocol;
 		int socketDescriptor;
-		char port[1024];
+		char port[6];
 	}serverConf;
 
 	// Estructura de datos para los hilos

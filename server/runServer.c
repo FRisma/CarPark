@@ -49,14 +49,16 @@ int runServer(serverConf *conf) {
 		perror("accept");
 		return -1;
 	} else {
+		puts("Cliente conectado");
 		printf("-------- Sock: %d -------------\n",arg.csd);
-
 		printf("\nPuerto: %s\tClient IP: %s Socket: %d\n",arg.port, inet_ntoa(client.sin_addr), arg.csd);
 
-		if (pthread_create(&tid1, NULL, threadWork,(void *)&arg) != 0) {
+		write(arg.csd,"Hola cliente",12);
+		/*if (pthread_create(&tid1, NULL, threadWork,(void *)&arg) != 0) {
 			perror("pthread_create");
 			//return -1;
-		}
+		}*/
+		close(arg.csd);
 	}
 
 	return 0;

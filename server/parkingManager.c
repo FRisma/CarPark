@@ -13,12 +13,11 @@ int parkingManager(char *configFile) {
 	printf("Archivo de configuracion %s", configFile);
 	serverConf *srvConf = (serverConf *)malloc(sizeof(serverConf));
 
-	/*if ( 0 > configServer(configFile, srvConf->port) ) {
+	if ( 0 > configServer(configFile, srvConf->port) ) {
 		free(srvConf);
 		perror("No se pudo configurar el servidor");
 		return -1;
-	}*/
-	strncpy(srvConf->port,"2587",5);
+	}
 	srvConf->protocol = 4; // Esto deberia ser parametrizable
 
 	// Crear el array de estructuras

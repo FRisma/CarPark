@@ -34,11 +34,14 @@ int configServer(char *cfgfile, char *port) {
 		return -1;
 	}
 
-	if (parse("port=[0-9]?[0-9]?[0-9]?[0-9]?[0-9](\\r|\\t|\\n|\\s)",buff,5,port) < 0){
+	/*if (parse("port=[0-9]?[0-9]?[0-9]?[0-9]?[0-9](\\r|\\t|\\n|\\s)",buff,5,port) < 0){
 		perror("parse");
 		close(fd);
 		return -1;
-	} 
+	}
+	port[strlen(port)-1]='\0';
+	*/
+	strncpy(port,"2587",5);
 	if (debug) printf("configServer - port: %s\n",port);
 	
 	if (strlen(port) < 1) { //Puerto invalido
@@ -46,7 +49,6 @@ int configServer(char *cfgfile, char *port) {
 		close(fd);
 		return -1;
 	}
-	port[strlen(port)-1]='\0';
 	close(fd);
     
 	return 0;

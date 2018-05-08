@@ -1,7 +1,7 @@
 #ifndef OPTIONSHANDLING_H_
 	#define OPTIONSHANDLING_H_
 
-	#define SLOT_ID_LENGHT 15
+	#define SLOT_ID_LENGHT 5
 
   	// Structure for the arguments parsing. Will be filled by optionsHandler()
 	typedef struct {
