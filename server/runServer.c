@@ -33,11 +33,10 @@ int runServer(serverConf *conf) {
 	// Create a mutex
 	
 	// Crear la estructura para los argumentos del hilo
-	threadData targ;
-	if ( (targ.port=(char *)malloc(MAX_PORT_LENGTH)) == NULL ) {
-		perror("malloc");
-		return -1;
-	}
+	threadData tdata;
+
+	// Create a mutex for launching concurrent threads (by default its created with value 1)
+	pthread_mutex_init(&tdata.sincro, NULL);
 	
 	printf("Starting server...\n\tListening on socket:%d\tServer port: %s\n", socket, conf->port);
 	if ( 0 > listen(socket,5) ) {
@@ -45,21 +44,21 @@ int runServer(serverConf *conf) {
 		return -1;
 	}
 
-	if ( (targ.csd = accept(socket,(struct sockaddr *)&client,&cli_size)) == -1 ) {
-		puts("something went wrong while serving the client");
-		perror("accept");
-		return -1;
-	} else {
-		puts("Cliente conectado");
-		printf("-------- Sock: %d -------------\n", targ.csd);
-		printf("\nPuerto: %s\tClient IP: %s Socket: %d\n", targ.port, inet_ntoa(client.sin_addr), targ.csd);
+	for (;;) {
+		if ( (tdata.csd = accept(socket,(struct sockaddr *)&client,&cli_size)) == -1 ) {
+			puts("something went wrong while serving the client");
+			perror("accept");
+			return -1;
+		} else {
+			puts("new client");
+			printf("Client IP: %s Socket: %d\n", inet_ntoa(client.sin_addr), tdata.csd);
 
-		write(targ.csd,"Hola cliente",12);
-		/*if (pthread_create(&tid1, NULL, threadWork,(void *)&arg) != 0) {
-			perror("pthread_create");
-			//return -1;
-		}*/
-		close(targ.csd);
+			if (pthread_create(&tid1, NULL, threadWork,(void *)&tdata) != 0) {
+				perror("pthread_create");
+				//return -1;
+			}
+			close(tdata.csd);
+		}
 	}
 
 	return 0;

@@ -4,6 +4,7 @@
 	#include "macros.h"
 	#include "utils/utils.h"
 	#include <mqueue.h>
+	#include <pthread.h>
 
 	// Estructura de una posicion en un estacionamiento
 	typedef struct pos {
@@ -23,9 +24,9 @@
 
 	// Estructura de datos para los hilos
 	typedef struct data {
-		char *port;
 		int csd; //Socket descriptor
 		mqd_t mqsd; //Message queue descriptor
+		pthread_mutex_t sincro; //Mutex para controlar concurrencia
 	}threadData;
 
 	// Esta es la funcion inicial que crea el contexto necesario para el funcionamiento, crea la cola de mensajes,
@@ -41,6 +42,6 @@
 	int runServer(serverConf *conf);
 
 	// Funcion que ejecuta cada hilo por cada nueva conexion
-	int threadWork(threadData *data);
+	void *threadWork(void *data);
 
 #endif
