@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#define debug 1
+#define debug 0
 
 int parse (char *patron, char *buff, int offset, char *resultado){
 

@@ -1,30 +1,33 @@
 #include "app.h"
 #include "socket/mySocket.h"
 
+#include <mqueue.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#define debug 0
-
-
-#include <mqueue.h>
+#define debug 1
 
 int parkingManager(char *configFile) {
 
 	// Hacer todas las configuraciones iniciales para el parking server
-	printf("Archivo de configuracion %s", configFile);
+	if (debug) printf("Archivo de configuracion %s\n", configFile);
 	serverConf *srvConf = (serverConf *)malloc(sizeof(serverConf));
 
-	if ( 0 > configServer(configFile, srvConf->port) ) {
+	if ( 0 > configServer(configFile, srvConf->port,srvConf->mqName) ) {
 		free(srvConf);
 		perror("No se pudo configurar el servidor");
 		return -1;
 	}
 	srvConf->protocol = 4; // Esto deberia ser parametrizable
 
-	// Crear el array de estructuras
-	slot slotArray[100];
+	// Creo el socket
+	if ( 0 > protocol_handler(srvConf->protocol, &srvConf->socketDescriptor, srvConf->port) ) {
+		perror("No se pudo configurar el socket");
+		free(srvConf);
+		close(srvConf->socketDescriptor);
+		return -1;
+	}
 
 	// Creo la cola de mensajes
 	mqd_t mq;
@@ -37,32 +40,22 @@ int parkingManager(char *configFile) {
 		mq_send(mq, "Hola desde el server", 21, 0);
 	}
 
-	// Creo el socket
-	if ( 0 > protocol_handler(srvConf->protocol, &srvConf->socketDescriptor, srvConf->port) ) {
-		perror("No se pudo configurar el socket");
-		free(srvConf);
-		close(srvConf->socketDescriptor);
-		return -1;
-	}
-	printf("El socket fd es: %d", srvConf->socketDescriptor);
 
-	puts("A punto de arrancar");
 	//Iniciar el parking server
-	if (debug) printf("Iniciando parking server - Protocol: ipv%d, Socket: %d, Port: %s", srvConf->protocol, srvConf->socketDescriptor, srvConf->port);
-	puts("2 A punto de arrancar");
+	if (debug) printf("Iniciando parking server - Protocol: ipv%d, Socket: %d, Port: %s\n", srvConf->protocol, srvConf->socketDescriptor, srvConf->port);
 	if ( 0 > runServer(srvConf) ) {
-		free(srvConf);
-		close(srvConf->socketDescriptor);
-		//close(messageQueue);
 		perror("Algo salio mal en runServer");
+		free(srvConf);
+		mq_close(mq);
+		close(srvConf->socketDescriptor);
 		return -1;
 	}
 	
 
-	// Cierro la cola de mensajes
-	// Close socket descriptor
+	puts("Saliendo");
+	free(srvConf);
+	mq_close(mq);
 	close(srvConf->socketDescriptor);
 
-	puts("Saliendo");
 	return 0;
 }

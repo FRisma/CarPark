@@ -14,7 +14,7 @@
 #include <pthread.h>
 #include <netdb.h>
 
-#define debug 1
+#define debug 0
 
 int runServer(serverConf *conf) {
 
@@ -25,40 +25,41 @@ int runServer(serverConf *conf) {
 	int socket = conf->socketDescriptor;	
 
 	struct sockaddr_in client;
-	socklen_t cli_size = sizeof(struct sockaddr_in);
-
-	// Crear la estructura para los argumentos del hilo
-	threadData arg;
-
-	if ( (arg.port=(char *)malloc(10)) == NULL ) {
-		perror("malloc");
-		return -1;
-	}
+	socklen_t cli_size = sizeof(struct sockaddr_in);	
+	
+	// Crear el array de estructuras
+	slot slotArray[100];
 
 	// Create a mutex
 	
-	printf("Starting server...\nListening on socket descriptor:%d\tServer port: %s\n", socket, arg.port);
-
+	// Crear la estructura para los argumentos del hilo
+	threadData targ;
+	if ( (targ.port=(char *)malloc(MAX_PORT_LENGTH)) == NULL ) {
+		perror("malloc");
+		return -1;
+	}
+	
+	printf("Starting server...\n\tListening on socket:%d\tServer port: %s\n", socket, conf->port);
 	if ( 0 > listen(socket,5) ) {
 		perror("listen");
 		return -1;
 	}
 
-	if ( (arg.csd = accept(socket,(struct sockaddr *)&client,&cli_size)) == -1 ) {
+	if ( (targ.csd = accept(socket,(struct sockaddr *)&client,&cli_size)) == -1 ) {
 		puts("something went wrong while serving the client");
 		perror("accept");
 		return -1;
 	} else {
 		puts("Cliente conectado");
-		printf("-------- Sock: %d -------------\n",arg.csd);
-		printf("\nPuerto: %s\tClient IP: %s Socket: %d\n",arg.port, inet_ntoa(client.sin_addr), arg.csd);
+		printf("-------- Sock: %d -------------\n", targ.csd);
+		printf("\nPuerto: %s\tClient IP: %s Socket: %d\n", targ.port, inet_ntoa(client.sin_addr), targ.csd);
 
-		write(arg.csd,"Hola cliente",12);
+		write(targ.csd,"Hola cliente",12);
 		/*if (pthread_create(&tid1, NULL, threadWork,(void *)&arg) != 0) {
 			perror("pthread_create");
 			//return -1;
 		}*/
-		close(arg.csd);
+		close(targ.csd);
 	}
 
 	return 0;

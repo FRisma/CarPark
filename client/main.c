@@ -42,14 +42,11 @@ int main (int argc, char *const argv[]) {
 			statusTicket(socketDescriptor,conf->slotId);
 			break;
 	}
-	//char buff[15];
-	//read(socketDescriptor,buff,15);
-	//printf("El server escribio: %s\n",buff);
 
 	// Muero
+	puts("Adios");
 	free(conf);
 	free(servParams);
-	puts("Adios");
 
 	return 0;
 }

@@ -8,11 +8,12 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <ctype.h>
 
 #define BUFF_SIZE 1024  //El tamaño debe ir acorde al tamanio del archivo que va a leer
-#define debug 1
+#define debug 0
 
-int configServer(char *cfgfile, char *port) {
+int configServer(char *cfgfile, char *port, char *mqName) {
 
 	if (debug) printf("configServer - cfg: %s\n",cfgfile);
 
@@ -32,18 +33,26 @@ int configServer(char *cfgfile, char *port) {
 		close(fd);
 		return -1;
 	}
+	
+	//Parse message queue name
+	if (parse("logging_mq_name=.+(\\r|\\t|\\n|\\s)",buff,16,mqName) < 0){
+		perror("parse");
+		close(fd);
+		return -1;
+	}
+	mqName[strlen(mqName)-1]='\0';
+	if (debug) printf("configServer - mqName: %s\n",mqName);
 
-	/*if (parse("port=[0-9]?[0-9]?[0-9]?[0-9]?[0-9](\\r|\\t|\\n|\\s)",buff,5,port) < 0){
+	//Parse message queue name
+	if (parse("port=[0-9]?[0-9]?[0-9]?[0-9]?[0-9](\\r|\\t|\\n|\\s)",buff,5,port) < 0){
 		perror("parse");
 		close(fd);
 		return -1;
 	}
 	port[strlen(port)-1]='\0';
-	*/
-	strncpy(port,"2587",5);
 	if (debug) printf("configServer - port: %s\n",port);
 	
-	if (strlen(port) < 1) { //Puerto invalido
+	if ( strnlen(port,MAX_PORT_LENGTH) < MIN_PORT_LENGTH || strnlen(port,9) > MAX_PORT_LENGTH || atoi(port) == 0 ) { //Puerto invalido
 		write(STDERR_FILENO,"Puerto invalido\n",16);
 		close(fd);
 		return -1;

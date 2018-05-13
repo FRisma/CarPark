@@ -6,11 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#define debug 1
+#define debug 0
 
 int main (int argc, char *const argv[]) {
 
-	puts("Trabajo Final - Computacion II - CarPark");
+	puts("\t\t ..:: Trabajo Final - Computacion II - CarPark ::..");
 	
 	// Manejar opciones
   	configuration *conf = (configuration *)malloc(sizeof(configuration));
