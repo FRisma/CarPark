@@ -30,29 +30,25 @@ int parkingManager(char *configFile) {
 	}
 
 	// Creo la cola de mensajes
-	mqd_t mq;
-	if ( -1 == (mq = mq_open("/carpark_log_queue", O_WRONLY)) ) {
+	//mqd_t mq;
+	if ( -1 == (srvConf->mqd = mq_open("/carpark_log_queue", O_WRONLY)) ) {
 		perror("mq_open");
 		printf("The message queue %s was not found, so no activity logging will be done","/carpark_log_queue");
 	}
-
-	//if (mq > 0) {
-	//	mq_send(mq, "Hola desde el server", 21, 0);
-	//}
 
 	//Iniciar el parking server
 	if (debug) printf("Iniciando parking server - Protocol: ipv%d, Socket: %d, Port: %s\n", srvConf->protocol, srvConf->socketDescriptor, srvConf->port);
 	if ( 0 > runServer(srvConf) ) {
 		perror("Algo salio mal en runServer");
+		mq_close(srvConf->mqd);
 		free(srvConf);
-		mq_close(mq);
 		close(srvConf->socketDescriptor);
 		return -1;
 	}
 	
 	puts("Saliendo");
+	mq_close(srvConf->mqd);
 	free(srvConf);
-	mq_close(mq);
 	close(srvConf->socketDescriptor);
 
 	return 0;

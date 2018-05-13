@@ -20,12 +20,13 @@
 		int socketDescriptor;
 		char mqName[MAX_MQ_NAME_LENGTH];
 		char port[MAX_PORT_LENGTH];
+		mqd_t mqd; //Message queue descriptor
 	}serverConf;
 
 	// Estructura de datos para los hilos
 	typedef struct data {
 		int csd; //Socket descriptor
-		mqd_t mqsd; //Message queue descriptor
+		mqd_t mqd; //Message queue descriptor
 		pthread_mutex_t sincro; //Mutex para controlar concurrencia
 	}threadData;
 

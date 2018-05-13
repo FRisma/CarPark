@@ -21,9 +21,6 @@ static char * const errorTemplate="HTTP/1.0 %s\r\nContent-Type: text/html\n\n%s"
 
 void* threadWork(void *data) {
 	
-	puts("Soy el hilo");
-
-
 	// Set this thread as detached
 	pthread_detach(pthread_self());
 	
@@ -33,7 +30,9 @@ void* threadWork(void *data) {
 	int newSocketDescriptor = arg->csd;
 	
 	// Map message queue
-	mqd_t mq = arg->mqsd;
+	printf("MQ arg: %d",arg->mqd);
+	mqd_t mq = arg->mqd;
+	printf("MQ loc: %d",mq);
 
 	char *responseHeader = NULL;
 	if ( (responseHeader = (char *)malloc(1024)) == NULL ) {
@@ -44,11 +43,12 @@ void* threadWork(void *data) {
 	int leido=0;
 	char buffer[1024];
 		        
-	if (debug) printf("ThreadArgs->connectionSD:%d ThreadArgs->MQD:%s\n",newSocketDescriptor,mq);
+	if (debug) printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",newSocketDescriptor, mq);
 	while( (leido = read(newSocketDescriptor,buffer,sizeof buffer)) > 0 ) {
 		if (debug) write(STDOUT_FILENO,buffer,leido);
-									
-		/*switch ( request(buffer,arg->droot,newSocketDescriptor) ){
+		write(newSocketDescriptor,buffer,leido);
+		/*							
+		switch ( request(buffer,arg->droot,newSocketDescriptor) ){
 			case 200: // Termina exitosamente
 				if (debug) puts("200OK File served");
 				break;
@@ -81,12 +81,13 @@ void* threadWork(void *data) {
 				}
 				break;
 		}
-		*/
 											
 		//if ( close(newSocketDescriptor) == -1 ) {
 		//	perror("close");
 		//}
 		//pthread_exit(NULL);
+		*/
+		mq_send(mq, "Hola desde el hiloserver", 21, 0);
 	}
 
 	return 0;

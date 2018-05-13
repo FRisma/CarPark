@@ -34,11 +34,13 @@ int runServer(serverConf *conf) {
 	
 	// Crear la estructura para los argumentos del hilo
 	threadData tdata;
+	tdata.mqd = conf->mqd; 
 
 	// Create a mutex for launching concurrent threads (by default its created with value 1)
 	pthread_mutex_init(&tdata.sincro, NULL);
 	
 	printf("Starting server...\n\tListening on socket:%d\tServer port: %s\n", socket, conf->port);
+	printf("Message queue %d\n", conf->mqd);
 	if ( 0 > listen(socket,5) ) {
 		perror("listen");
 		return -1;
@@ -50,7 +52,6 @@ int runServer(serverConf *conf) {
 			perror("accept");
 			return -1;
 		} else {
-			puts("new client");
 			printf("Client IP: %s Socket: %d\n", inet_ntoa(client.sin_addr), tdata.csd);
 
 			if (pthread_create(&tid1, NULL, threadWork,(void *)&tdata) != 0) {
