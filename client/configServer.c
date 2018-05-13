@@ -1,5 +1,4 @@
 #include "app.h"
-#include "utils/utils.h"
 
 #include <regex.h>
 #include <unistd.h>

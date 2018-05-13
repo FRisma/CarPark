@@ -1,5 +1,4 @@
 #include "app.h"
-#include "utils/utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +8,7 @@
 
 int main (int argc, char *const argv[]) {
 
-	puts("Trabajo Final - Computacion II - CarPark Client");
+	puts("\t\t ..:: Trabajo Final - Computacion II - CarPark Client ::..");
 
 	int socketDescriptor = 0;
 
@@ -47,5 +46,6 @@ int main (int argc, char *const argv[]) {
 	free(conf);
 	free(servParams);
 	puts("Adios");
+
 	return 0;
 }

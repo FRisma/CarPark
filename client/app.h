@@ -1,6 +1,8 @@
 #ifndef APP_H_
 	#define APP_H_
 
+	#include "utils/utils.h"
+	
 	typedef struct {
 		char serverIp[16];
 		char port[6];
