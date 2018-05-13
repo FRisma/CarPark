@@ -7,6 +7,9 @@
 
 #define debug 0
 
+
+#include <mqueue.h>
+
 int parkingManager(char *configFile) {
 
 	// Hacer todas las configuraciones iniciales para el parking server
@@ -24,6 +27,15 @@ int parkingManager(char *configFile) {
 	slot slotArray[100];
 
 	// Creo la cola de mensajes
+	mqd_t mq;
+	if ( -1 == (mq = mq_open("/carpark_log_queue", O_WRONLY)) ) {
+		perror("mq_open");
+		printf("The message queue %s was not found, so no activity logging will be done","/carpark_log_queue");
+	}
+
+	if (mq > 0) {
+		mq_send(mq, "Hola desde el server", 21, 0);
+	}
 
 	// Creo el socket
 	if ( 0 > protocol_handler(srvConf->protocol, &srvConf->socketDescriptor, srvConf->port) ) {
