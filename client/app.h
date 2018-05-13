@@ -6,6 +6,7 @@
 	#define MAX_IP_LENGTH 16
 	#define MIN_IP_LENGTH 7
 	#define MAX_PORT_LENGTH 6
+	#define MIN_PORT_LENGTH 2
 
 	typedef struct {
 		char serverIp[MAX_IP_LENGTH];
