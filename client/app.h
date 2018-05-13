@@ -9,7 +9,7 @@
 	#define MIN_PORT_LENGTH 2
 
 	typedef struct {
-		char serverIp[MAX_IP_LENGTH];
+		char ip[MAX_IP_LENGTH];
 		char port[MAX_PORT_LENGTH];
 	}clientConf;
 
