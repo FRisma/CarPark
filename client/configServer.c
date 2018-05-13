@@ -38,9 +38,15 @@ int configServer(char *cfgfile, char *ip, char *port) {
 		close(fd);
 		return -1;
 	} 
-	if (debug) printf("configServer - ip: %s\n",ip);
 	ip[strlen(ip)-1]='\0';
 
+	if ( strnlen(ip,20) > MAX_IP_LENGTH || strnlen(ip,MAX_IP_LENGTH) < MIN_IP_LENGTH ) {
+		perror("Ip length not valid");
+		close (fd);
+		return -1;
+	}
+	if (debug) printf("configServer - ip: %s\n",ip);
+	
 	/*if (parse("port=[0-9]?[0-9]?[0-9]?[0-9]?[0-9](\\r|\\t|\\n|\\s)",buff,5,port) < 0){
 		perror("parse port");
 		close(fd);

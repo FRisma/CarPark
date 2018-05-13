@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define debug 1
+#define debug 0
 
 void optionsHandler (int argc, char* const argv[], configuration *conf) {
 

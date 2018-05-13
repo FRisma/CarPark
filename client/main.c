@@ -18,8 +18,11 @@ int main (int argc, char *const argv[]) {
 
 	// Configuro el cliente desde archivo
 	clientConf *servParams = (clientConf *)malloc(sizeof(configuration));
-	configServer("servidor.cfg",servParams->serverIp,servParams->port);
-
+	if ( 0 > configServer("servidor.cfg",servParams->serverIp,servParams->port) ) {
+		free(conf);
+		free(servParams);
+		return -1;
+	}
 	// Abro conexion con el socket
 	//establishConnection(&socketDescriptor,servParams);
 

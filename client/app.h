@@ -2,10 +2,14 @@
 	#define APP_H_
 
 	#include "utils/utils.h"
-	
+
+	#define MAX_IP_LENGTH 16
+	#define MIN_IP_LENGTH 7
+	#define MAX_PORT_LENGTH 6
+
 	typedef struct {
-		char serverIp[16];
-		char port[6];
+		char serverIp[MAX_IP_LENGTH];
+		char port[MAX_PORT_LENGTH];
 	}clientConf;
 
 	int establishConnection(int *sd, clientConf *conf);
