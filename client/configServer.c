@@ -10,8 +10,8 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
-#define BUFF_SIZE 1024  //El tamaño debe ir acorde al tamanio del archivo que va a leer
-#define debug 1
+#define BUFF_SIZE 256  //El tamaño debe ir acorde al tamanio del archivo que va a leer
+#define debug 0
 
 int configServer(char *cfgfile, char *ip, char *port) {
 
