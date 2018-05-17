@@ -26,13 +26,16 @@ int ipv4(int *sd,char *puerto){
 	dir.sin_family = AF_INET;
 	dir.sin_port = htons(atoi(puerto));
 	dir.sin_addr.s_addr = INADDR_ANY;
-    if (bind(*sd,(struct sockaddr *)&dir,sizeof dir) < 0){
+ 
+	if ( setsockopt(*sd, SOL_SOCKET, SO_REUSEADDR, &opc, sizeof(int)) <0 ){
+		perror("setsockopt()");
+		return -1;
+	}   
+	
+	if (bind(*sd,(struct sockaddr *)&dir,sizeof dir) < 0){
 		perror ("bind_ipv4");
 		return -1;
 	}
-	if ( setsockopt(*sd, SOL_SOCKET, SO_REUSEADDR, (char *) &opc, sizeof(opc)) <0 ){
-		perror("setsockopt()");
-		return -1;
-	}
+
 	return 0;
 }

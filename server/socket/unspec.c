@@ -20,8 +20,6 @@ int unspec(int *sd,const char *puerto){
 	struct addrinfo hints, *res, *ptr;
 	int opc = 1;
 
-//	puerto[strlen(puerto)-1]='\0'; //Reemplazo el ultimo caracter de puerto(\n) por \0
-	
 	memset(&hints,0,sizeof(struct addrinfo));	
 	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
   	hints.ai_socktype = SOCK_STREAM; /* Stream socket */

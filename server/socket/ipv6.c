@@ -25,14 +25,16 @@ int ipv6(int *sd,char *puerto){
 	dir.sin6_family = AF_INET6;
 	dir.sin6_port = htons(atoi(puerto));
 	dir.sin6_addr = in6addr_any;
-	if (bind(*sd,(struct sockaddr *)&dir,sizeof dir) < 0){
-		perror("bind ipv6");
-		return -1;
-	}
-	if ( setsockopt(*sd, SOL_SOCKET, SO_REUSEADDR, (char *) &opc, sizeof(opc)) <0 ){
+	
+	if ( setsockopt(*sd, SOL_SOCKET, SO_REUSEADDR, &opc, sizeof(int)) <0 ){
 		perror("setsockopt()");
 		return -1;
 	}
 
+	if (bind(*sd,(struct sockaddr *)&dir,sizeof dir) < 0){
+		perror("bind ipv6");
+		return -1;
+	}
+	
 	return 0;
 }

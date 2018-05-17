@@ -17,7 +17,7 @@ static char * const e500_message="<html>\n<body>\n500 Something went terribly wr
 
 static char * const errorTemplate="HTTP/1.0 %s\r\nContent-Type: text/html\n\n%s";
 
-#define debug 1
+#define debug 0
 
 void* threadWork(void *data) {
 	
@@ -27,12 +27,10 @@ void* threadWork(void *data) {
 	threadData *arg = (threadData *)data;
 		
 	// Map structure into local variables
-	int newSocketDescriptor = arg->csd;
+	int sd = arg->csd;
 	
 	// Map message queue
-	printf("MQ arg: %d",arg->mqd);
 	mqd_t mq = arg->mqd;
-	printf("MQ loc: %d",mq);
 
 	char *responseHeader = NULL;
 	if ( (responseHeader = (char *)malloc(1024)) == NULL ) {
@@ -43,10 +41,12 @@ void* threadWork(void *data) {
 	int leido=0;
 	char buffer[1024];
 		        
-	if (debug) printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",newSocketDescriptor, mq);
-	while( (leido = read(newSocketDescriptor,buffer,sizeof buffer)) > 0 ) {
+	if (debug) printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
+	while( (leido = read(sd,buffer,sizeof buffer)) > 0 ) {
 		if (debug) write(STDOUT_FILENO,buffer,leido);
-		write(newSocketDescriptor,buffer,leido);
+		if ( 0 > write(sd,buffer,leido) ) {
+			perror("Thread - write");
+		}
 		/*							
 		switch ( request(buffer,arg->droot,newSocketDescriptor) ){
 			case 200: // Termina exitosamente
@@ -81,13 +81,18 @@ void* threadWork(void *data) {
 				}
 				break;
 		}
-											
-		//if ( close(newSocketDescriptor) == -1 ) {
-		//	perror("close");
-		//}
-		//pthread_exit(NULL);
+
 		*/
-		mq_send(mq, "Hola desde el hiloserver", 21, 0);
+		if ( close(sd) == -1 ) {
+			perror("close");
+		}
+
+		if (0 < mq) {
+			mq_send(mq, "Hola desde el hiloserver", 21, 0);
+		}
+
+		free(responseHeader);
+		pthread_exit(NULL);
 	}
 
 	return 0;

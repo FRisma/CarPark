@@ -28,10 +28,8 @@ int runServer(serverConf *conf) {
 	socklen_t cli_size = sizeof(struct sockaddr_in);	
 	
 	// Crear el array de estructuras
-	slot slotArray[100];
+	//slot slotArray[100];
 
-	// Create a mutex
-	
 	// Crear la estructura para los argumentos del hilo
 	threadData tdata;
 	tdata.mqd = conf->mqd; 
@@ -40,14 +38,14 @@ int runServer(serverConf *conf) {
 	pthread_mutex_init(&tdata.sincro, NULL);
 	
 	printf("Starting server...\n\tListening on socket:%d\tServer port: %s\n", socket, conf->port);
-	printf("Message queue %d\n", conf->mqd);
 	if ( 0 > listen(socket,5) ) {
 		perror("listen");
 		return -1;
 	}
 
-	for (;;) {
-		if ( (tdata.csd = accept(socket,(struct sockaddr *)&client,&cli_size)) == -1 ) {
+	int i = 0;
+	while ( (tdata.csd = accept(socket,(struct sockaddr *)&client,&cli_size)) != -1 ) {
+		if (tdata.csd == -1) {
 			puts("something went wrong while serving the client");
 			perror("accept");
 			return -1;
@@ -56,11 +54,10 @@ int runServer(serverConf *conf) {
 
 			if (pthread_create(&tid1, NULL, threadWork,(void *)&tdata) != 0) {
 				perror("pthread_create");
-				//return -1;
 			}
-			close(tdata.csd);
 		}
+		i++;
+		printf("Welcome client %d\n",i);
 	}
-
 	return 0;
 }

@@ -16,9 +16,6 @@ int protocol_handler(int protoId,int *sd,char *port){
 	}
 	
 	switch(protoId){
-		 	case 0:  //IPV4 or IPV6
-				if(unspec(sd,port) < 0) return -1;
-				break;
 			case 4:  //IPV4
 				if(ipv4(sd,port) < 0) return -1;
 				break;
@@ -26,7 +23,7 @@ int protocol_handler(int protoId,int *sd,char *port){
 				if (ipv6(sd,port) < 0) return -1;
 				break;
 			default:
-				write(STDERR_FILENO,"Invalid protocol\n",17);
+				if(unspec(sd,port) < 0) return -1;
 				return -1;
 	}
 	return 0;
