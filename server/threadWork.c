@@ -17,7 +17,7 @@ static char * const e500_message="<html>\n<body>\n500 Something went terribly wr
 
 static char * const errorTemplate="HTTP/1.0 %s\r\nContent-Type: text/html\n\n%s";
 
-#define debug 0
+#define debug 1
 
 void* threadWork(void *data) {
 	
@@ -35,6 +35,9 @@ void* threadWork(void *data) {
 	char *responseHeader;
 	if ( (responseHeader = (char *)malloc(1024)) == NULL ) {
 		perror("malloc responseHeader");
+		close(sd);
+		pthread_exit(NULL);
+		
 	}
 
 	int leido;
@@ -42,9 +45,19 @@ void* threadWork(void *data) {
 		        
 	if (debug) printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
 	while( (leido = read(sd,buffer,sizeof buffer)) > 0 ) {
+		if (-1 == leido) {
+			perror("Thread - read");
+			free(responseHeader);
+			close(sd);
+			pthread_exit(NULL);
+
+		}
 		if (debug) write(STDOUT_FILENO,buffer,leido);
 		if ( 0 > write(sd,buffer,leido) ) {
 			perror("Thread - write");
+			free(responseHeader);
+			close(sd);
+			pthread_exit(NULL);
 		}
 		/*							
 		switch ( request(buffer,arg->droot,newSocketDescriptor) ){

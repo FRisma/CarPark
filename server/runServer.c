@@ -31,9 +31,8 @@ int runServer(serverConf *conf) {
 	//slot slotArray[100];
 
 	// Crear la estructura para los argumentos del hilo
-	threadData tdata;
-	tdata.mqd = conf->mqd; 
-
+	threadData tdata = {0};
+	tdata.mqd = conf->mqd;
 	// Create a mutex for launching concurrent threads (by default its created with value 1)
 	pthread_mutex_init(&tdata.sincro, NULL);
 	
@@ -44,13 +43,15 @@ int runServer(serverConf *conf) {
 	}
 
 	int i = 0;
-	while ( (tdata.csd = accept(socket,(struct sockaddr *)&client,&cli_size)) != -1 ) {
-		if (tdata.csd == -1) {
+	int nsd;
+	while ( (nsd = accept(socket,(struct sockaddr *)&client,&cli_size)) != -1 ) {
+		if (nsd == -1) {
 			puts("something went wrong while serving the client");
 			perror("accept");
 			return -1;
 		} else {
-			printf("Client IP: %s Socket: %d\n", inet_ntoa(client.sin_addr), tdata.csd);
+			printf("Client IP: %s Socket: %d\n", inet_ntoa(client.sin_addr), nsd);
+			tdata.csd = nsd;
 
 			if (pthread_create(&tid1, NULL, threadWork,(void *)&tdata) != 0) {
 				perror("pthread_create");
