@@ -14,11 +14,16 @@ int main (int argc, char *const argv[]) {
 	
 	// Manejar opciones
   	configuration *conf = (configuration *)malloc(sizeof(configuration));
-	optionsHandler(argc, argv, conf);
-	if (debug) printf("Parameters: ParkServer %s\n", conf->parkingServerCfgFile);
-
-	// Lanzar el server de estacionamiento
-	parkingManager(conf->parkingServerCfgFile);
+	if (conf) {
+		optionsHandler(argc, argv, conf);
+		if (debug) printf("Parameters: ParkServer %s\n", conf->parkingServerCfgFile);
 	
+		// Lanzar el server de estacionamiento
+		parkingManager(conf->parkingServerCfgFile);
+	} else {
+		perror("malloc");
+		return -1;
+	}
+	free(conf);
 	return 0;
 }

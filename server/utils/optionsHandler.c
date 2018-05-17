@@ -14,7 +14,7 @@
 
 void optionsHandler (int argc, char* const argv[], configuration *conf) {
 
-    int opt = 0;
+    int opt;
 
 	// Configure default values
 	strncpy(conf->parkingServerCfgFile, DEFAULT_PARK_CONFIGFILE, strnlen(DEFAULT_PARK_CONFIGFILE,FILE_PATH_LENGHT)+1);

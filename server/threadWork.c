@@ -32,13 +32,12 @@ void* threadWork(void *data) {
 	// Map message queue
 	mqd_t mq = arg->mqd;
 
-	char *responseHeader = NULL;
+	char *responseHeader;
 	if ( (responseHeader = (char *)malloc(1024)) == NULL ) {
 		perror("malloc responseHeader");
 	}
 
-
-	int leido=0;
+	int leido;
 	char buffer[1024];
 		        
 	if (debug) printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
@@ -95,5 +94,6 @@ void* threadWork(void *data) {
 		pthread_exit(NULL);
 	}
 
+	free(responseHeader);
 	return 0;
 }
