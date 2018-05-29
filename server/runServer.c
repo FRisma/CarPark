@@ -42,6 +42,7 @@ int runServer(serverConf *conf) {
 		return -1;
 	}
 
+	free(conf);
 	int i = 0;
 	int nsd;
 	while ( (nsd = accept(socket,(struct sockaddr *)&client,&cli_size)) != -1 ) {

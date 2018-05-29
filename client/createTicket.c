@@ -1,4 +1,5 @@
 #include "app.h"
+#include "constants.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -8,6 +9,9 @@
 void createTicket(int socketDescriptor) {
 
 	char buff[512];
+
+	printf("La constante es: %s ----\n",HTTP_GET);
+
 	write(socketDescriptor,"C: Hola, create\n",17);
 	while( read(socketDescriptor,buff,512) ) {
 		printf("S: %s\n",buff);

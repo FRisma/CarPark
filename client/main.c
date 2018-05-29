@@ -26,6 +26,7 @@ int main (int argc, char *const argv[]) {
 
 	// Abro conexion con el socket
 	establishConnection(&socketDescriptor,servParams);
+	free(servParams);
 
 	// Hago el trabajo
 	switch (conf->opt) {
@@ -45,8 +46,8 @@ int main (int argc, char *const argv[]) {
 
 	// Muero
 	puts("Adios");
+	close(socketDescriptor);
 	free(conf);
-	free(servParams);
 
 	return 0;
 }
