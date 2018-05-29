@@ -1,8 +1,19 @@
 const char *HTTP_PUT = "PUT %s HTTP/1.1\n"\
-						"Content-Type: %s";
+						"Content-Type: %s\n"\
+						"Content-Length: %s\r\n\r\n"\
+						"%s";
+
+const char *HTTP_POST = "POST %s HTTP/1.1\n"\
+						"Content-Type: %s\n"\
+						"Content-Length: %s\r\n\r\n"\
+						"%s";
+
 
 const char *HTTP_GET = "GET %s HTTP/1.1\n"\
-						"Content-Type: %s";
+						"Content-Type: %s\n"\
+						"Content-Length: %s";
+
+const char *CT_JSON = "application/json";
 
 /*
 const unsigned int MAX_IP_LENGTH = 16;

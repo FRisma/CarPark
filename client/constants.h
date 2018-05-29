@@ -1,5 +1,7 @@
 extern const char *HTTP_PUT;
+extern const char *HTTP_POST;
 extern const char *HTTP_GET;
+extern const char *CT_JSON;
 /*
 extern const unsigned int MAX_IP_LENGTH;
 extern const unsigned int MIN_IP_LENGTH;
