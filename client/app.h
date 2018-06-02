@@ -9,7 +9,7 @@
 		char port[MAX_PORT_LENGTH];
 	}clientConf;
 
-	typedef struct pos {
+	typedef struct Positions {
 		long int id;
 		long int idCli;
 		int floor;
@@ -21,8 +21,14 @@
 
 	int configServer(char *cfgfile, char *ip, char *port);
 
-	void createTicket(int socketDescriptor);
+	int createTicket(int socketDescriptor);
 	void deleteTicket(int socketDescriptor, char *slotId);
 	void statusTicket(int socketDescriptor, char *slotId);
+
+	/* Convert the slot structre into a serialized string ready to be sent */
+	int serialize(slot s, char *serialized);
+	
+	/* Send thru a sd descriptor the stream of bytes stored in req, the answer will be stored in resp */
+	int dispatch(int sd, char *req, char *resp);
 
 #endif
