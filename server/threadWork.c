@@ -25,13 +25,25 @@ void* threadWork(void *data) {
 	pthread_detach(pthread_self());
 	
 	threadData *arg = (threadData *)data;
-		
+	//puts("--->");
+	//printf("\tH: slotArray addr: %p\n",(void*)(arg->positions));
+	//puts("<--->");
+
 	// Map structure into local variables
 	int sd = arg->csd;
 	
 	// Map message queue
 	mqd_t mq = arg->mqd;
 
+	struct slot *tmp = arg->start;
+	if (debug) {
+		do {
+			printf("T Nodo: %li\n", tmp->id);
+			tmp->id = 3;
+			tmp = tmp->next;
+		}while(tmp->next != NULL);
+	}
+	
 	char *responseHeader;
 	if ( (responseHeader = (char *)malloc(1024)) == NULL ) {
 		perror("malloc responseHeader");

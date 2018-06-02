@@ -28,40 +28,46 @@ int runServer(serverConf *conf) {
 	socklen_t cli_size = sizeof(struct sockaddr_in);	
 	
 	// Crear el array de estructuras
-	//slot slotArray[100];
+	struct slot *locStart = NULL;
+	createLocations(&locStart);
 
-	// Crear la estructura para los argumentos del hilo
-	threadData tdata = {0};
-	tdata.mqd = conf->mqd;
 	// Create a mutex for launching concurrent threads (by default its created with value 1)
-	pthread_mutex_init(&tdata.sincro, NULL);
+	pthread_mutex_t mutex;
+	pthread_mutex_init(&mutex, NULL);
 	
 	printf("Starting server...\n\tListening on socket:%d\tServer port: %s\n", socket, conf->port);
 	free(conf);
 	if ( 0 > listen(socket,5) ) {
+		freeLocations(locStart);
 		perror("listen");
 		return -1;
 	}
-	
-	int i = 1;
-	int nsd;
+
+	int nsd = -1;
 	while ( (nsd = accept(socket, (struct sockaddr *)&client, &cli_size)) != -1 ) {
-		if (nsd == -1) {
+		if (-1 == nsd) {
 			perror("accept");
 			// it would be much better to have a handle_error to check the root cause of the error (see bind(2))
 			return -1;
 		} else {
-			printf("Client IP: %s Socket: %d Count: %d\n", inet_ntoa(client.sin_addr), nsd, i);
-			tdata.csd = nsd;
+			printf("Client IP: %s Socket: %d\n", inet_ntoa(client.sin_addr), nsd);
+			
+			// Crear la estructura para los argumentos del hilo
+			threadData *tdata = (threadData *)malloc(sizeof(threadData));
+			tdata->mqd = conf->mqd;
+			tdata->csd = nsd;
+			tdata->sincro = mutex;
+			tdata->start = locStart;
 
-			if (pthread_create(&tid1, NULL, threadWork,(void *)&tdata) != 0) {
+			// Start thread
+			if (pthread_create(&tid1, NULL, threadWork, (void *)tdata) != 0) {
 				perror("pthread_create");
 			}
 		}
-		i++;
 	}
 
 	close(socket);
-	close(tdata.mqd);
+	freeLocations(locStart);
+	//close(tdata.mqd);
 	return 0;
 }

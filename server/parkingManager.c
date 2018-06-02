@@ -21,6 +21,9 @@ int parkingManager(char *configFile) {
 	}
 	srvConf->protocol = 4; // Esto deberia ser parametrizable
 
+	// Arranco el proceso de logging indicandole el nombre de la cola como argumento
+	startLoggingProcess(srvConf->mqName);
+
 	// Creo el socket
 	if ( 0 > protocol_handler(srvConf->protocol, &srvConf->socketDescriptor, srvConf->port) ) {
 		perror("No se pudo configurar el socket");

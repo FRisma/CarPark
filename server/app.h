@@ -7,16 +7,17 @@
 	#include <pthread.h>
 
 	// Estructura de una posicion en un estacionamiento
-	typedef struct Positions {
+	typedef struct slot{
 		long int id;
 		long int idCli;
 		int floor;
 		unsigned int offset;
 		unsigned long checkInTime;
+		struct slot *next;
 	}slot;
 
 	// Estructura de configuracion del server
-	typedef struct params {
+	typedef struct {
 		int protocol;
 		int socketDescriptor;
 		char mqName[MAX_MQ_NAME_LENGTH];
@@ -25,10 +26,11 @@
 	}serverConf;
 
 	// Estructura de datos para los hilos
-	typedef struct Data {
-		int csd; //Socket descriptor
-		mqd_t mqd; //Message queue descriptor
-		pthread_mutex_t sincro; //Mutex para controlar concurrencia
+	typedef struct {
+		int csd;				/* Socket descriptor */
+		mqd_t mqd; 				/* Message queue descriptor */
+		pthread_mutex_t sincro; /* Mutex for managing concurrency when accessing the linked list */
+		slot *start; 			/* Points to the begining of a linkedlist allocated in the heap to be shared by the threads */
 	}threadData;
 
 	/* Esta es la funcion inicial que crea el contexto necesario para el funcionamiento, crea la cola de mensajes,
@@ -39,6 +41,17 @@
 
 	/* Abre el archivo de configuracion y parsea la informacion para escribir el resultado en port y mqName */
 	int configServer(char *cfgfile, char *port, char *mqName);
+
+	/* Launches the logging process on a different process, this will fork.
+	 * The arg will be the name of the message queue the new process will try to open
+	 */
+	int startLoggingProcess(char *arg);
+
+	/* Create a linked list for the slots */
+	int createLocations(slot **startingNode);
+	
+	/* Frees the memory allocated by createLocations */
+	int freeLocations(slot *startingNode);
 
 	/* Se crea el contexto necesario para el funcionamiento de los hilos, se pone el socket a escuchar y finalmente ante
 	 * cada nueva conexion al socket, se llama a la funcion que atiende a cada cliente.
