@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define debug 1
+#define debug 0
 
 int parkingManager(char *configFile) {
 
@@ -47,9 +47,5 @@ int parkingManager(char *configFile) {
 	}
 	
 	puts("Saliendo");
-	mq_close(srvConf->mqd);
-	close(srvConf->socketDescriptor);
-//	free(srvConf);
-
 	return 0;
 }

@@ -7,8 +7,9 @@
 	#include <pthread.h>
 
 	// Estructura de una posicion en un estacionamiento
-	typedef struct pos {
+	typedef struct Positions {
 		long int id;
+		long int idCli;
 		int floor;
 		unsigned int offset;
 		unsigned long checkInTime;
@@ -24,25 +25,27 @@
 	}serverConf;
 
 	// Estructura de datos para los hilos
-	typedef struct data {
+	typedef struct Data {
 		int csd; //Socket descriptor
 		mqd_t mqd; //Message queue descriptor
 		pthread_mutex_t sincro; //Mutex para controlar concurrencia
 	}threadData;
 
-	// Esta es la funcion inicial que crea el contexto necesario para el funcionamiento, crea la cola de mensajes,
-	// obtiene la configuracion necesaria para el server del archivo de configuracion
-	// crea el socket, crea la cola de mensajes
+	/* Esta es la funcion inicial que crea el contexto necesario para el funcionamiento, crea la cola de mensajes,
+	 * obtiene la configuracion necesaria para el server del archivo de configuracion
+	 * crea el socket, crea la cola de mensajes
+	 */
 	int parkingManager(char *configFile);
 
-	// Abre el archivo de configuracion y parsea la informacion para escribir el resultado en port y mqName
+	/* Abre el archivo de configuracion y parsea la informacion para escribir el resultado en port y mqName */
 	int configServer(char *cfgfile, char *port, char *mqName);
 
-	// Se crea el contexto necesario para el funcionamiento de los hilos, se pone el socket a escuchar y finalmente ante
-	// cada nueva conexion al socket, se llama a la funcion que atiende a cada cliente.
+	/* Se crea el contexto necesario para el funcionamiento de los hilos, se pone el socket a escuchar y finalmente ante
+	 * cada nueva conexion al socket, se llama a la funcion que atiende a cada cliente.
+	 */
 	int runServer(serverConf *conf);
 
-	// Funcion que ejecuta cada hilo por cada nueva conexion
+	/* Funcion que ejecuta cada hilo por cada nueva conexion */
 	void *threadWork(void *data);
 
 #endif

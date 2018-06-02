@@ -37,21 +37,21 @@ int runServer(serverConf *conf) {
 	pthread_mutex_init(&tdata.sincro, NULL);
 	
 	printf("Starting server...\n\tListening on socket:%d\tServer port: %s\n", socket, conf->port);
+	free(conf);
 	if ( 0 > listen(socket,5) ) {
 		perror("listen");
 		return -1;
 	}
-
-	free(conf);
-	int i = 0;
+	
+	int i = 1;
 	int nsd;
-	while ( (nsd = accept(socket,(struct sockaddr *)&client,&cli_size)) != -1 ) {
+	while ( (nsd = accept(socket, (struct sockaddr *)&client, &cli_size)) != -1 ) {
 		if (nsd == -1) {
-			puts("something went wrong while serving the client");
 			perror("accept");
+			// it would be much better to have a handle_error to check the root cause of the error (see bind(2))
 			return -1;
 		} else {
-			printf("Client IP: %s Socket: %d\n", inet_ntoa(client.sin_addr), nsd);
+			printf("Client IP: %s Socket: %d Count: %d\n", inet_ntoa(client.sin_addr), nsd, i);
 			tdata.csd = nsd;
 
 			if (pthread_create(&tid1, NULL, threadWork,(void *)&tdata) != 0) {
@@ -59,7 +59,9 @@ int runServer(serverConf *conf) {
 			}
 		}
 		i++;
-		printf("Welcome client %d\n",i);
 	}
+
+	close(socket);
+	close(tdata.mqd);
 	return 0;
 }

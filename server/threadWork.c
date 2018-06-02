@@ -37,7 +37,6 @@ void* threadWork(void *data) {
 		perror("malloc responseHeader");
 		close(sd);
 		pthread_exit(NULL);
-		
 	}
 
 	int leido;
@@ -50,7 +49,6 @@ void* threadWork(void *data) {
 			free(responseHeader);
 			close(sd);
 			pthread_exit(NULL);
-
 		}
 		if (debug) write(STDOUT_FILENO,buffer,leido);
 		if ( 0 > write(sd,buffer,leido) ) {
