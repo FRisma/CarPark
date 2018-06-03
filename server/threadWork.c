@@ -109,8 +109,14 @@ void* threadWork(void *data) {
 			perror("close");
 		}
 
+		/* using mq_timesend because if the queue is full we don't want to block the thread for a long period of time */
 		if (0 < mq) {
-			mq_send(mq, "Hola desde el hiloserver", 21, 0);
+			struct timespec waitTime = {0};
+			waitTime.tv_sec = 1; 	/* seconds */
+			waitTime.tv_nsec = 0; 	/* nano seconds */
+			if ( -1 == mq_timedsend(mq, "mensaje desde el hilo", 21, 0, &waitTime) ) {
+				perror("mq_timesend");
+			}
 		}
 
 		free(responseHeader);
