@@ -3,6 +3,7 @@
 
 	#include "macros.h"
 	#include "utils/utils.h"
+	#include "processRequest.h"
 	#include <mqueue.h>
 	#include <pthread.h>
 

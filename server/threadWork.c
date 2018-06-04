@@ -17,7 +17,7 @@ static char * const e500_message="<html>\n<body>\n500 Something went terribly wr
 
 static char * const errorTemplate="HTTP/1.0 %s\r\nContent-Type: text/html\n\n%s";
 
-#define debug 1
+#define debug 0
 
 void* threadWork(void *data) {
 	
@@ -51,25 +51,32 @@ void* threadWork(void *data) {
 		pthread_exit(NULL);
 	}
 
-	int leido;
-	char buffer[1024];
-		        
+	http_request *req = (http_request *)malloc(sizeof(http_request));
+	
 	if (debug) printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
-	while( (leido = read(sd,buffer,sizeof buffer)) > 0 ) {
-		if (-1 == leido) {
-			perror("Thread - read");
-			free(responseHeader);
-			close(sd);
-			pthread_exit(NULL);
+	
+	processRequest(sd,req);
+	
+
+
+	if ( -1 == close(sd) ) {
+		perror("close");
+	}
+
+	/* using mq_timesend because if the queue is full we don't want to block the thread for a long period of time */
+	if (0 < mq) {
+		struct timespec waitTime = {0};
+		waitTime.tv_sec = 1; 	/* seconds */
+		waitTime.tv_nsec = 0; 	/* nano seconds */
+		if ( -1 == mq_timedsend(mq, "mensaje desde el hilo", 21, 0, &waitTime) ) {
+			perror("mq_timesend");
 		}
-		if (debug) write(STDOUT_FILENO,buffer,leido);
-		if ( 0 > write(sd,buffer,leido) ) {
-			perror("Thread - write");
-			free(responseHeader);
-			close(sd);
-			pthread_exit(NULL);
-		}
-		/*							
+	}
+
+	free(responseHeader);
+	pthread_exit(NULL);
+	
+	/*							
 		switch ( request(buffer,arg->droot,newSocketDescriptor) ){
 			case 200: // Termina exitosamente
 				if (debug) puts("200OK File served");
@@ -105,24 +112,6 @@ void* threadWork(void *data) {
 		}
 
 		*/
-		if ( close(sd) == -1 ) {
-			perror("close");
-		}
-
-		/* using mq_timesend because if the queue is full we don't want to block the thread for a long period of time */
-		if (0 < mq) {
-			struct timespec waitTime = {0};
-			waitTime.tv_sec = 1; 	/* seconds */
-			waitTime.tv_nsec = 0; 	/* nano seconds */
-			if ( -1 == mq_timedsend(mq, "mensaje desde el hilo", 21, 0, &waitTime) ) {
-				perror("mq_timesend");
-			}
-		}
-
-		free(responseHeader);
-		pthread_exit(NULL);
-	}
-
-	free(responseHeader);
+		
 	return 0;
 }

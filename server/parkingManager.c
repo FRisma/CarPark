@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define debug 0
+#define debug 1
 
 int parkingManager(char *configFile) {
 
@@ -22,7 +22,7 @@ int parkingManager(char *configFile) {
 	srvConf->protocol = 4; // Esto deberia ser parametrizable
 
 	// Arranco el proceso de logging indicandole el nombre de la cola como argumento
-	startLoggingProcess(srvConf->mqName);
+	//startLoggingProcess(srvConf->mqName);
 
 	// Creo el socket
 	if ( 0 > protocol_handler(srvConf->protocol, &srvConf->socketDescriptor, srvConf->port) ) {
@@ -34,6 +34,7 @@ int parkingManager(char *configFile) {
 
 	// Creo la cola de mensajes
 	srvConf->mqd = -1;
+	printf("Abro la cola %s\n",srvConf->mqName);
 	if ( -1 == (srvConf->mqd = mq_open(srvConf->mqName, O_WRONLY)) ) {
 		perror("mq_open");
 		printf("The message queue %s was not found, so no activity logging will be done",srvConf->mqName);

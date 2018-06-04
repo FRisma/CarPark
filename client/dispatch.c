@@ -8,7 +8,6 @@
 
 int dispatch(int sd, char *req, char *resp) {
 
-	puts("Dentro de request");
 	//En realidad deberia recibir un char* para escribir la respuesta y usar el
 	//return value para control de errores.
 	//de esa manera, no necesito crear buff
@@ -16,7 +15,6 @@ int dispatch(int sd, char *req, char *resp) {
 	int leido;
 
 	if (debug) printf("El request es: %s\n",req);
-	puts("A punto de mandarlo por el socket");
 	if ( -1 == write(sd, req, strlen(req)) ) {
 		perror("write");
 		return -1;
