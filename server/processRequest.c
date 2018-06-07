@@ -7,88 +7,108 @@
 #include <string.h>
 #include <ctype.h>
 
-#define debug 1
+const char *kregexPattern	=	"%s .*\r\n";
+const char *kct				=	"Content-Type:";
+const char *kcl				=	"Content-Length:";
+const char *kget			=	"GET";
+const char *kpost			=	"POST";
+const char *kput			=	"PUT";
+const char *kdelete			=	"DELETE";
+
+#define debug 0
 
 int processRequest(int sd, http_request *req) {
 
 	int leido;
 	char buffer[1024] = {'\0'};;
+	char aux[1024] = {'\0'};
 	char tmp[255] = {'\0'};
+	char expression[128] = {'\0'};
 
-	//memset
-		
-	while( (leido = read(sd,buffer,sizeof buffer)) > 0 ) {
+	char *tmp2;	
+	char *outer_ptr=NULL;
+	
+	while( (leido = read(sd,buffer,sizeof(buffer))) > 0 ) {
 		if (-1 == leido) {
 			perror("processRequest - read");
-			close(sd);
 			return -1;
 		}
-
 		if (debug) write(STDOUT_FILENO,buffer,leido);
 		if (debug) write(STDOUT_FILENO,"\n",1);
 
 		/* ---------------- Parsing ----------------------- */
-		char *outer_ptr=NULL;
-		
+
 		/* Method */
-		char *aux = (char*)malloc(sizeof(buffer));
-		strncpy(aux,buffer,strnlen(buffer,sizeof(buffer)));
-		char *tmp2 = strtok_r(aux, " ", &outer_ptr);
-		if ( 0 == strncmp("POST",tmp2,strnlen(tmp2,4)) )
+		strncpy(aux,buffer,strnlen(buffer,sizeof(aux)));
+		tmp2 = strtok_r(aux, " ", &outer_ptr);
+		if ( 0 == strncmp(kpost,tmp2,strnlen(kpost,4)) )
 			req->method = POST;
-		if ( 0 == strncmp("GET",tmp2,strnlen(tmp2,3)) )
+		if ( 0 == strncmp(kget,tmp2,strnlen(kget,3)) )
 			req->method = GET;
-		if ( 0 == strncmp("PUT",tmp2,strnlen(tmp2,3)) )
+		if ( 0 == strncmp(kput,tmp2,strnlen(kput,3)) )
 			req->method = PUT;
-		if ( 0 == strncmp("DELETE",tmp2,strnlen(tmp2,6)) )
+		if ( 0 == strncmp(kdelete,tmp2,strnlen(kdelete,6)) )
 			req->method = DELETE;
 		if ( 0 == strncmp("HEAD",tmp2,strnlen(tmp2,4)) )
 			req->method = HEAD;
 		if ( 0 == strncmp("OPTIONS",tmp2,strnlen(tmp2,7)) )
 			req->method = OPTIONS;
+		
+		if ( 0 >= req->method ) {
+			write(STDERR_FILENO,"no HTTP method detected\n",24);
+			return -1;
+		}
 		if (debug) printf("processRequest - method: %d\n",req->method);
 
 		/* Resource */
 		memset(tmp,'\0',sizeof(tmp));
-		if ( parse("POST /.*([\r\n])",buffer,6,tmp) < 0){
-			perror("parse method");
-			close(sd);
+		snprintf(expression,strlen(tmp2)+strlen(kregexPattern)+1,kregexPattern,tmp2);
+		if ( parse(expression,buffer,strnlen(tmp2,6),tmp) < 0) {
+			write(STDERR_FILENO,parseError,strlen(parseError));
 			return -1;
 		}
-		tmp[strlen(tmp)-1]='\0';
-		if (debug) printf("processRequest - resource: %s\n",tmp);
+		tmp2= strtok_r(tmp, " ", &outer_ptr);
+		strncpy(req->resource,tmp2,strlen(tmp2));
+		if (debug) printf("processRequest - resource: %s\n",req->resource);
 
 		/* Content Type */
 		memset(tmp,'\0',sizeof(tmp));
-		if ( parse("Content-Type: .*([\r\n])",buffer,14,tmp) < 0){
-			perror("parse method");
-			close(sd);
+		snprintf(expression,strlen(kct)+strlen(kregexPattern)+1,kregexPattern,kct);
+		if ( parse(expression,buffer,14,tmp) < 0 ) {
+			write(STDERR_FILENO,parseError,strlen(parseError));
 			return -1;
 		}
 		tmp[strlen(tmp)-1]='\0';
-		if (debug) printf("processRequest - CT: %s\n",tmp);
+		strncpy(req->content_type,tmp,255);
+		if (debug) printf("processRequest - CT: %s\n",req->content_type);
 
 		/* Content Length */
 		memset(tmp,'\0',sizeof(tmp));
-		if ( parse("Content-Length: .*([\r\n])",buffer,16,tmp) < 0){
-			perror("parse method");
-			close(sd);
+		snprintf(expression,strlen(kcl)+strlen(kregexPattern)+1,kregexPattern,kcl);
+		if ( parse(expression,buffer,16,tmp) < 0){
+			write(STDERR_FILENO,parseError,strlen(parseError));
 			return -1;
 		}
 		tmp[strlen(tmp)-1]='\0';
-		if (debug) printf("processRequest - CL: %s\n",tmp);
-
+		req->content_length = atol(tmp);
+		if (debug) printf("processRequest - CL: %li\n",req->content_length);
 
 		/* Body */
+		if (0 < req->content_length) {
+			memset(aux,'\0',sizeof(aux));
+			if ( parse("\r\n\r\n.*}",buffer,4,aux) < 0){
+				write(STDERR_FILENO,parseError,strlen(parseError));
+				return -1;
+			}
+			aux[strlen(aux)-1]='\0';
+			req->body = (char *)malloc(req->content_length);
+			strncpy(req->body,aux,req->content_length);
+			if (debug) printf("processRequest - BODY: %s\n",req->body);
+		}
 
-
-
-		/*if ( 0 > write(sd,buffer,leido) ) {
-			perror("Thread - write");
-			free(responseHeader);
-			close(sd);
-			pthread_exit(NULL);
-		}*/
+		// Si la longitud del metdo, del recurso, y, si el metodo es post, el content length y el body son mayores que
+		// 0, entonces romper el bucle.
+		break;
 	}
 
 	return 0;

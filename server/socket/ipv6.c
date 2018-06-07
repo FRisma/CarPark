@@ -13,9 +13,8 @@
 
 int ipv6(int *sd,char *puerto){
 	
-	struct sockaddr_in6 dir = {};
+	struct sockaddr_in6 dir = {0};
 	int opc = 1;
-
 
 	*sd = socket(AF_INET6,SOCK_STREAM,0);
 	if (*sd < 0){

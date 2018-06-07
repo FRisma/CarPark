@@ -1,4 +1,4 @@
-CFLAGS := -Wall -Wextra -g -L/home/ubuntu/compu2/CarPark/jsonParser/lib
+CFLAGS := -Wall -Wextra -Wpedantic -Wchkp -Wuninitialized -Winit-self -g -L/home/ubuntu/compu2/CarPark/jsonParser/lib
 TARGETS := client
 CC := gcc $(CFLAGS)
 

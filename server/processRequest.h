@@ -3,7 +3,7 @@
 
 	//include http constants
 	typedef enum methods { 
-		GET, 
+		GET = 1, 
 		POST, 
 		PUT, 
 		UPDATE, 
@@ -16,7 +16,7 @@
 		http_methods method;
 		char resource[255];
 		char content_type[255];
-		unsigned long content_lenght;
+		unsigned long content_length;
 		char *body;
 	} http_request;
 

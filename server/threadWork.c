@@ -17,7 +17,7 @@ static char * const e500_message="<html>\n<body>\n500 Something went terribly wr
 
 static char * const errorTemplate="HTTP/1.0 %s\r\nContent-Type: text/html\n\n%s";
 
-#define debug 0
+#define debug 1
 
 void* threadWork(void *data) {
 	
@@ -25,9 +25,7 @@ void* threadWork(void *data) {
 	pthread_detach(pthread_self());
 	
 	threadData *arg = (threadData *)data;
-	//puts("--->");
 	//printf("\tH: slotArray addr: %p\n",(void*)(arg->positions));
-	//puts("<--->");
 
 	// Map structure into local variables
 	int sd = arg->csd;
@@ -36,7 +34,9 @@ void* threadWork(void *data) {
 	mqd_t mq = arg->mqd;
 
 	struct slot *tmp = arg->start;
+	
 	if (debug) {
+		printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
 		do {
 			printf("T Nodo: %li\n", tmp->id);
 			tmp->id = 3;
@@ -44,24 +44,37 @@ void* threadWork(void *data) {
 		}while(tmp->next != NULL);
 	}
 	
-	char *responseHeader;
+	/*char *responseHeader;
 	if ( (responseHeader = (char *)malloc(1024)) == NULL ) {
 		perror("malloc responseHeader");
 		close(sd);
 		pthread_exit(NULL);
-	}
+	}*/
 
 	http_request *req = (http_request *)malloc(sizeof(http_request));
-	
-	if (debug) printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
-	
-	processRequest(sd,req);
-	
-
-
-	if ( -1 == close(sd) ) {
-		perror("close");
+	if ( 0 > processRequest(sd,req)) {
+		close(sd);
+		free(req);
+		pthread_exit(NULL);
 	}
+	//free(req->body);
+
+	if (debug) printf("Request - MT: %d\n",req->method);
+	if (debug) printf("Request - RS: %s\n",req->resource);
+	if (debug) printf("Request - CT: %s\n",req->content_type);
+	if (debug) printf("Request - CL: %li\n",req->content_length);
+	//if (debug) printf("Request - BO: %s\n",req->body);
+
+	if ( 0 > write(sd,"HTTP 200 OK\r\n\r\n",15) ) {
+			perror("Thread - write");
+			free(req);
+			close(sd);
+			pthread_exit(NULL);
+	}
+
+	free(req);
+
+	if ( -1 == close(sd) ) { perror("close"); }
 
 	/* using mq_timesend because if the queue is full we don't want to block the thread for a long period of time */
 	if (0 < mq) {
@@ -73,8 +86,9 @@ void* threadWork(void *data) {
 		}
 	}
 
-	free(responseHeader);
+	//free(responseHeader);
 	pthread_exit(NULL);
+}
 	
 	/*							
 		switch ( request(buffer,arg->droot,newSocketDescriptor) ){
@@ -112,6 +126,3 @@ void* threadWork(void *data) {
 		}
 
 		*/
-		
-	return 0;
-}

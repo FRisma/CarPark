@@ -1,4 +1,4 @@
-CFLAGS := -Wall -Wextra -g
+CFLAGS := -Wall -Wextra -Wpedantic -Wchkp -Wuninitialized -Winit-self -g
 TARGETS := logger
 CC := gcc $(CFLAGS)
 

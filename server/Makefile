@@ -1,4 +1,4 @@
-CFLAGS := -Wall -Wextra -g -pthread
+CFLAGS := -Wall -Wextra -Wpedantic -Wchkp -Wuninitialized -Winit-self -g -pthread
 TARGETS := server
 CC := gcc $(CFLAGS)
 

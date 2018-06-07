@@ -14,7 +14,7 @@
 
 int ipv4(int *sd,char *puerto){
 
-	struct sockaddr_in dir = {};
+	struct sockaddr_in dir = {0};
 	memset(&dir,0,sizeof(struct sockaddr_in));
 	
 	int opc = 1;
