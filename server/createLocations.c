@@ -15,6 +15,7 @@ int createLocations(slot **startingNode) {
 	for (loop = 0; loop < nodes; loop++) {
 		slot *newSlot = (slot *)malloc(sizeof(slot));
 		newSlot->id = loop*10;
+		newSlot->available = true;
 		newSlot->floor = 0;
 		newSlot->offset = loop;
 		newSlot->next = NULL;

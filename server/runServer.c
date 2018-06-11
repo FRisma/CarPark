@@ -32,8 +32,9 @@ int runServer(serverConf *conf) {
 	createLocations(&locStart);
 
 	// Create a mutex for launching concurrent threads (by default its created with value 1)
-	pthread_mutex_t mutex;
-	pthread_mutex_init(&mutex, NULL);
+	// this should be in the heap not in the stack, so every thread has access to it and share the value
+	pthread_mutex_t *mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(mutex, NULL);
 	
 	printf("Starting server...\n\tListening on socket:%d\tServer port: %s\n", socket, conf->port);
 	free(conf);

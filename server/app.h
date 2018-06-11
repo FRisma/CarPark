@@ -7,9 +7,15 @@
 	#include <mqueue.h>
 	#include <pthread.h>
 
+	typedef enum {
+		false,
+		true
+	}bool;
+
 	// Estructura de una posicion en un estacionamiento
 	typedef struct slot{
 		long int id;
+		bool available;
 		long int idCli;
 		int floor;
 		unsigned int offset;
@@ -30,7 +36,7 @@
 	typedef struct {
 		int csd;				/* Socket descriptor */
 		mqd_t mqd; 				/* Message queue descriptor */
-		pthread_mutex_t sincro; /* Mutex for managing concurrency when accessing the linked list */
+		pthread_mutex_t *sincro; /* Mutex for managing concurrency when accessing the linked list */
 		slot *start; 			/* Points to the begining of a linkedlist allocated in the heap to be shared by the threads */
 	}threadData;
 
@@ -61,5 +67,11 @@
 
 	/* Funcion que ejecuta cada hilo por cada nueva conexion */
 	void *threadWork(void *data);
+
+	/* Checkin, looks for an available slot and makes a reservation */
+	slot* checkin(slot *startingNode, pthread_mutex_t *mutex);
+
+	/* Checkout, frees the reservation matching the currentNode->id */
+	slot* checkout(slot *currentNode, pthread_mutex_t *mutex);
 
 #endif
