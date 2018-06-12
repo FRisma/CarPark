@@ -13,7 +13,7 @@
 
 int ipv6(int *sd,char *puerto){
 	
-	struct sockaddr_in6 dir = {};
+	struct sockaddr_in6 dir = {0};
 	int opc = 1;
 
 

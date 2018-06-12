@@ -6,6 +6,7 @@
 	#include "processRequest.h"
 	#include <mqueue.h>
 	#include <pthread.h>
+	#include <stddef.h>
 
 	typedef enum {
 		false,
@@ -18,8 +19,8 @@
 		bool available;
 		long int idCli;
 		int floor;
-		unsigned int offset;
-		unsigned long checkInTime;
+		size_t offset;
+		struct tm *checkInTime;
 		struct slot *next;
 	}slot;
 
@@ -68,10 +69,10 @@
 	/* Funcion que ejecuta cada hilo por cada nueva conexion */
 	void *threadWork(void *data);
 
-	/* Checkin, looks for an available slot and makes a reservation */
-	slot* checkin(slot *startingNode, pthread_mutex_t *mutex);
+	/* Checkin, looks for an available slot and makes a reservation, the new location is pointed by result */
+	int checkin(slot *startingNode, slot **result, pthread_mutex_t *mutex);
 
 	/* Checkout, frees the reservation matching the currentNode->id */
-	slot* checkout(slot *currentNode, pthread_mutex_t *mutex);
+	int checkout(slot *currentNode, pthread_mutex_t *mutex);
 
 #endif

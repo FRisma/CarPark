@@ -25,7 +25,9 @@ void* threadWork(void *data) {
 	int sd = arg->csd;
 	mqd_t mq = arg->mqd;
 	pthread_mutex_t *mutex = arg->sincro;
-	struct slot *start = arg->start;
+	
+	struct slot *start = arg->start; // HEAD
+	struct slot *current = NULL; // Current position
 	//printf("\tH: slotArray addr: %p\n",(void*)(arg->positions));
 	
 	if (debug) {
@@ -46,18 +48,19 @@ void* threadWork(void *data) {
 	}
 
 	if (debug) {
-		printf("Request - MT: %d\n",req->method);
-		printf("Request - RS: %s\n",req->resource);
-		printf("Request - CT: %s\n",req->content_type);
-		printf("Request - CL: %li\n",req->content_length);
+		printf("Request\n\tMT: %d\n\tRS: %s\n\tCT: %s\n\tCL: %li",req->method, req->resource, req->content_type, req->content_length);
 		//printf("Request - BO: %s\n",req->body);
 	}
 	//free(req->body);
 
 	// Hacer el trabajo
 	//buscar un lugar libre
-	checkin(start,mutex);
-	
+	checkin(start,&current,mutex);
+	if (NULL == current) {
+		puts("No more places");
+	} else {
+		printf("Asignado Nodo: %li disp:%d hora:%s\n", current->id, asctime(current->checkInTime));
+	}
 	//dar de baja
 	//checkout(node, mutex);
 	
@@ -70,7 +73,6 @@ void* threadWork(void *data) {
 			pthread_exit(NULL);
 	}
 
-	free(req);
 
 	if ( -1 == close(sd) ) { perror("close"); }
 
@@ -84,7 +86,7 @@ void* threadWork(void *data) {
 		}
 	}
 
-	//free(responseHeader);
+	free(req);
 	pthread_exit(NULL);
 }
 	

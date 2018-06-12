@@ -1,6 +1,8 @@
 #ifndef PROCESSREQUEST_H_
 	#define PROCESSREQUEST_H_
 
+	#include <stddef.h>
+
 	//include http constants
 	typedef enum methods { 
 		GET = 1, 
@@ -16,7 +18,7 @@
 		http_methods method;
 		char resource[255];
 		char content_type[255];
-		unsigned long content_length;
+		size_t content_length;
 		char *body;
 	} http_request;
 

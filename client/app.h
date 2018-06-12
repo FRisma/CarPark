@@ -3,6 +3,12 @@
 
 	#include "utils/utils.h"
 	#include "constants.h"
+	#include <stdlib.h>
+
+	typedef enum {
+		false,
+		true
+	}bool;
 
 	typedef struct {
 		char ip[MAX_IP_LENGTH];
@@ -11,10 +17,11 @@
 
 	typedef struct Positions {
 		long int id;
+		bool available;
 		long int idCli;
 		int floor;
-		unsigned int offset;
-		unsigned long checkInTime;
+		size_t offset;
+		struct tm *checkInTime;
 	}slot;
 
 	int establishConnection(int *sd, clientConf *conf);

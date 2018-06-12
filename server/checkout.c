@@ -1,6 +1,6 @@
 #import "app.h"
 
-int checkout(struct slot *current, struct const slot *start) {
+int checkout(struct slot *currentNode, pthread_mutex_t *mutex) {
 
 	struct slot *node = start;
 	do {

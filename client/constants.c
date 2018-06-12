@@ -1,17 +1,16 @@
 const char *HTTP_PUT = "PUT %s HTTP/1.1\r\n"\
 						"Content-Type: %s\r\n"\
-						"Content-Length: %s\r\n\r\n"\
+						"Content-Length: %li\r\n\r\n"\
 						"%s";
 
 const char *HTTP_POST = "POST %s HTTP/1.1\r\n"\
 						"Content-Type: %s\r\n"\
-						"Content-Length: %s\r\n\r\n"\
+						"Content-Length: %li\r\n\r\n"\
 						"%s";
-
 
 const char *HTTP_GET = "GET %s HTTP/1.1\r\n"\
 						"Content-Type: %s\r\n"\
-						"Content-Length: %s\r\n\r\n";
+						"Content-Length: %li\r\n\r\n";
 
 const char *CT_JSON = "application/json";
 

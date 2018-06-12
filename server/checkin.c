@@ -4,38 +4,36 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pthread.h>
+#include <time.h>
 
 #define debug 1
 
-slot* checkin(struct slot *start, pthread_mutex_t *mutex) {
+int checkin(struct slot *start, struct slot **result, pthread_mutex_t *mutex) {
 
-	struct slot *node = start;
+	time_t rawtime;
+	struct slot node = start;	
 	if ( 0 != pthread_mutex_lock(mutex) ) {
 		perror("pther_mutex_lock");
 		return -1;
 	}
 	do {
-		//if (debug) printf("Nodo: %li Disp:%d hilo:%li\n", node->id, node->available, pthread_self());
+		//if (debug) printf("Nodo: %li Disp:%d hilo:%li\n", result->id, result->available, pthread_self());
 		if (true == node->available) {
 			printf("Asignando Nodo: %li hilo:%li\n", node->id, pthread_self());
 			node->available = false;
-			node->idCli = 678;
-			node->checkInTime = 23.32;
+			node->idCli = 345;
+			time(&rawtime);
+			(*result)->checkInTime = localtime(&rawtime);
 			break;
 		} else {
-			node = node->next;
+			*result = (*result)->next;
 		}
-	}while(node != NULL);
+	}while(result != NULL);
 	if ( 0 != pthread_mutex_unlock(mutex) ) {
 		//no se puede liberar el mutex
 		perror("pthread_mutex_unlock");
-		return NULL;
+		return -1;
 	}
 	
-	// Si no hay posiciones libres, node sale siendo NULL
-	if (node == NULL) {
-		//Todo lleno
-	}
-
-	return node;
+	return 0;
 }

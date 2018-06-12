@@ -14,9 +14,7 @@
 
 int ipv4(int *sd,char *puerto){
 
-	struct sockaddr_in dir = {};
-	memset(&dir,0,sizeof(struct sockaddr_in));
-	
+	struct sockaddr_in dir = {0};
 	int opc = 1;
 
 	if ( (*sd = socket(PF_INET,SOCK_STREAM,0)) < 0 ){

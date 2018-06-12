@@ -16,7 +16,7 @@
 
 int establishConnection(int *sd, clientConf *conf){
 
-    struct sockaddr_in serverSock = {0}; //Inicializa la estructura con 0
+    struct sockaddr_in serverSock = {0};
 
     //Protocolo
     serverSock.sin_addr.s_addr=inet_addr(conf->ip);

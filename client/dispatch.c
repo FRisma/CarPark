@@ -8,9 +8,6 @@
 
 int dispatch(int sd, char *req, char *resp) {
 
-	//En realidad deberia recibir un char* para escribir la respuesta y usar el
-	//return value para control de errores.
-	//de esa manera, no necesito crear buff
 	char buff[512];
 	int leido;
 
@@ -24,6 +21,7 @@ int dispatch(int sd, char *req, char *resp) {
 			perror("read");
 			return -1;
 		}
+		strncpy(resp,buff,strnlen(buff,sizeof(buff)));
 		if (debug) write(STDOUT_FILENO,buff,leido);
 		//algun mecanismo para realloc del puntero y appendearle la siguiente lectura
 	}
