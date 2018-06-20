@@ -1,16 +1,25 @@
 #include "app.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #define debug 0
 
-void deleteTicket(int socketDescriptor, char *slotId) {
+const char *kDeleteURI = "slot/%s";
 
-	// Deberia hacer un delete de la posicion, basado en el slotId.
-	char buff[512];
-	write(socketDescriptor,"C: Hola, delete\n",17);
-	while( read(socketDescriptor,buff,512) ) {
-		printf("S: %s\n",buff);
+int deleteTicket(int socketDescriptor, char *slotId) {
+
+	char httpRequest[256] = {'\0'};
+	char httpResponse[512] = {'\0'};
+	char resource[16] = {'\0'};
+
+	snprintf(resource, strlen(kDeleteURI) + strnlen(slotId,SLOT_ID_LENGTH) + 1, kDeleteURI, slotId);
+	snprintf(httpRequest, strlen(HTTP_DELETE) + strlen(resource) + 1, HTTP_DELETE, resource); 
+
+	if (-1 == dispatch(socketDescriptor, httpRequest, httpResponse) ) {
+		return -1;
 	}
+
+	return 0;
 }

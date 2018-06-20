@@ -11,7 +11,7 @@
 int createTicket(int socketDescriptor) {
 
 	char httpRequest[512];
-	char httpResponse[512];
+	char httpResponse[512]; //Esto tiene que ser un puntero para poder escribirlo en la funcion dispach
 	char body[256];
 
 	slot s1;
@@ -32,7 +32,9 @@ int createTicket(int socketDescriptor) {
 	if (-1 == dispatch(socketDescriptor,httpRequest,httpResponse) ) {
 		return -1;
 	}
-	
+
+	// Convertir el http response a una estructura slot 
+	printf("Nueva posicion asignada %s\n",httpResponse);
 	//HAcer un post con un hash para identificar al nuevo usuario
 	//deberia tener un id de app cliente, unico para cada instancia, de esa manera
 	//en el server, guardamos tambien este id de puerta de ingreso, y nos permite

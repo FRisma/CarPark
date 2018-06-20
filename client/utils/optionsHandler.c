@@ -27,22 +27,22 @@ void optionsHandler (int argc, char* const argv[], configuration *conf) {
 			case 'd':
 				if (debug) printf("Delete ticket\n");
 				conf->opt = 'd';
-				if (strlen(optarg) == SLOT_ID_LENGHT) {
-					strncpy(conf->slotId, optarg, strnlen(optarg,SLOT_ID_LENGHT)+1);
+				if (strlen(optarg) == SLOT_ID_LENGTH) {
+					strncpy(conf->slotId, optarg, strnlen(optarg,SLOT_ID_LENGTH)+1);
 					if (debug) printf("Ticket:%s\n",optarg);
 				} else {
-					printf("Ticket lenght should be of %d chars\n",SLOT_ID_LENGHT);
+					printf("Ticket lenght should be of %d chars\n",SLOT_ID_LENGTH);
 					exit(EXIT_FAILURE);
 				}
 				break;
 			case 's':
 				if (debug) printf("Status\n");
 				conf->opt = 's';
-				if (strlen(optarg) == SLOT_ID_LENGHT) {
-					strncpy(conf->slotId, optarg, strnlen(optarg,SLOT_ID_LENGHT)+1);
+				if (strlen(optarg) == SLOT_ID_LENGTH) {
+					strncpy(conf->slotId, optarg, strnlen(optarg,SLOT_ID_LENGTH)+1);
 					if (debug) printf("Ticket:%s\n",optarg);
 				} else {
-					printf("Ticket lenght should be of %d chars\n",SLOT_ID_LENGHT);
+					printf("Ticket lenght should be of %d chars\n",SLOT_ID_LENGTH);
 					exit(EXIT_FAILURE);
 				}
 				break;

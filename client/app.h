@@ -1,8 +1,8 @@
 #ifndef APP_H_
 	#define APP_H_
 
-	#include "utils/utils.h"
 	#include "constants.h"
+	#include "utils/utils.h"
 	#include <stdlib.h>
 
 	typedef enum {
@@ -29,8 +29,8 @@
 	int configServer(char *cfgfile, char *ip, char *port);
 
 	int createTicket(int socketDescriptor);
-	void deleteTicket(int socketDescriptor, char *slotId);
-	void statusTicket(int socketDescriptor, char *slotId);
+	int deleteTicket(int socketDescriptor, char *slotId);
+	int statusTicket(int socketDescriptor, char *slotId);
 
 	/* Convert the slot structre into a serialized string ready to be sent */
 	int serialize(slot s, char *serialized);

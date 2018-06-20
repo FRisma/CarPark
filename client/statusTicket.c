@@ -1,18 +1,25 @@
 #include "app.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
+
+const char *kStatuseURI = "slot/%s";
 
 #define debug 0
 
-void statusTicket(int socketDescriptor, char *slotId) {
+int statusTicket(int socketDescriptor, char *slotId) {
 
-	char buff[512];
+	char httpRequest[256] = {'\0'};
+	char httpResponse[512] = {'\0'};
+	char resource[16] = {'\0'};
 
-	//Deberia hacer un GETchar buff[512];
-	write(socketDescriptor,"C: Hola, status\n",17);
-	while( read(socketDescriptor,buff,512) ) {
-		printf("S: %s\n",buff);
+	snprintf(resource, strlen(kStatusURI) + strnlen(slotId,SLOT_ID_LENGTH) + 1, kDeleteURI, slotId);
+	snprintf(httpRequest, strlen(HTTP_GET) + strlen(resource) + 1, HTTP_GET, resource); 
+
+	if (-1 == dispatch(socketDescriptor, httpRequest, httpResponse) ) {
+		return -1;
 	}
 
+	return 0;
 }

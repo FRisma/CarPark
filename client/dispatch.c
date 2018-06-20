@@ -8,7 +8,7 @@
 
 int dispatch(int sd, char *req, char *resp) {
 
-	char buff[512];
+	char buff[2*1024];
 	int leido;
 
 	if (debug) printf("El request es: %s\n",req);

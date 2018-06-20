@@ -25,7 +25,11 @@ int main (int argc, char *const argv[]) {
 	}
 
 	// Abro conexion con el socket
-	establishConnection(&socketDescriptor,servParams);
+	if ( -1 == establishConnection(&socketDescriptor,servParams) ) {
+		perror("establishConnection");
+		free(servParams);
+		return -1;
+	}
 	free(servParams);
 
 	// Hago el trabajo
