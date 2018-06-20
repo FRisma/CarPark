@@ -1,5 +1,5 @@
-#ifndef PROCESSREQUEST_H_
-	#define PROCESSREQUEST_H_
+#ifndef REQUESTHEADER_H_
+	#define REQUESTHEADER_H_
 
 	#include <stddef.h>
 
@@ -23,6 +23,6 @@
 	} http_request;
 
 	/* Will read from the socket and parse the info to fill in the htttp_request struct */
-	int processRequest(int socket, http_request *req);
+	int requestHeader(int socket, http_request *req);
 
 #endif

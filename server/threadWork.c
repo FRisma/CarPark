@@ -27,8 +27,7 @@ void* threadWork(void *data) {
 	pthread_mutex_t *mutex = arg->sincro;
 	
 	struct slot *start = arg->start; // HEAD
-	struct slot *current = NULL; // Current position
-	//printf("\tH: slotArray addr: %p\n",(void*)(arg->positions));
+	//free(data);	
 	
 	if (debug) {
 		printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
@@ -41,7 +40,7 @@ void* threadWork(void *data) {
 	}
 	
 	http_request *req = (http_request *)malloc(sizeof(http_request));
-	if ( 0 > processRequest(sd,req)) {
+	if ( 0 > requestHeader(sd,req)) {
 		close(sd);
 		free(req);
 		pthread_exit(NULL);
@@ -54,15 +53,30 @@ void* threadWork(void *data) {
 	//free(req->body);
 
 	// Hacer el trabajo
-	//buscar un lugar libre
-	checkin(start,&current,mutex);
-	if (NULL == current) {
-		puts("No more places");
-	} else {
-		printf("Asignado Nodo: %li disp:%d hora:%s\n", current->id, asctime(current->checkInTime));
+	switch (req->method) {
+		case POST: //buscar un lugar libre
+			puts("Creando una reserva");
+			struct slot *current = NULL; // Current position
+			checkin(start,&current,mutex);
+			if (NULL == current) {
+				puts("No more places");
+			} else {
+				printf("Asignado Nodo: %li disp:%d hora:%s\n", current->id, current->available, asctime(current->checkInTime));
+			}
+			break;
+		case GET: // Si viene un id en resource es porque esta consultando el estado
+			puts("Status de una reserva");
+			//Do something
+			break;
+		case DELETE: // Si o si el delete tiene que venir acompaÃado de un req->resource con un id
+			puts("Delete una reserva");
+			//dar de baja
+			//checkout(node, mutex);
+			break;
+		default:
+			puts("Not implemented yet");
+			//Todavia no se implementa
 	}
-	//dar de baja
-	//checkout(node, mutex);
 	
 	//createResponse();
 

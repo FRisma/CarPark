@@ -5,7 +5,7 @@ CC := gcc $(CFLAGS)
 all: $(TARGETS)
 
 server: main.c parkingManager.c configServer.c startLoggingProcess.c\
-	createLocations.c freeLocations.c runServer.c threadWork.c processRequest.c\
+	createLocations.c freeLocations.c runServer.c threadWork.c requestHeader.c\
 	checkin.c\
 	utils/optionsHandler.c utils/parse.c\
 	socket/ipv4.c socket/ipv6.c socket/unspec.c socket/protocol_handler.c\

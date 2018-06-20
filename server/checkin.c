@@ -11,7 +11,7 @@
 int checkin(struct slot *start, struct slot **result, pthread_mutex_t *mutex) {
 
 	time_t rawtime;
-	struct slot node = start;	
+	struct slot *node = start;	
 	if ( 0 != pthread_mutex_lock(mutex) ) {
 		perror("pther_mutex_lock");
 		return -1;
