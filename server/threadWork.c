@@ -48,29 +48,27 @@ void* threadWork(void *data) {
 
 	if (debug) {
 		printf("Request\n\tMT: %d\n\tRS: %s\n\tCT: %s\n\tCL: %li",req->method, req->resource, req->content_type, req->content_length);
-		//printf("Request - BO: %s\n",req->body);
+		if (req->body) printf("Request - BO: %s\n",req->body);
 	}
 	//free(req->body);
 
+	struct slot *result = NULL; // Pointer to the result
 	// Hacer el trabajo
 	switch (req->method) {
 		case POST: //buscar un lugar libre
-			puts("Creando una reserva");
-			struct slot *current = NULL; // Current position
-			checkin(start,&current,mutex);
-			if (NULL == current) {
+			checkin(start,result,mutex);
+			if (NULL == result) {
 				puts("No more places");
 			} else {
-				printf("Asignado Nodo: %li disp:%d hora:%s\n", current->id, current->available, asctime(current->checkInTime));
+				printf("Asignado Nodo: %li disp:%d hora:%s\n hilo:%li\n", result->id, result->available, asctime(result->checkInTime), pthread_self());
 			}
 			break;
 		case GET: // Si viene un id en resource es porque esta consultando el estado
 			puts("Status de una reserva");
-			//Do something
+			//status();
 			break;
 		case DELETE: // Si o si el delete tiene que venir acompaÃado de un req->resource con un id
 			puts("Delete una reserva");
-			//dar de baja
 			//checkout(node, mutex);
 			break;
 		default:

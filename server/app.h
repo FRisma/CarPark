@@ -70,9 +70,12 @@
 	void *threadWork(void *data);
 
 	/* Checkin, looks for an available slot and makes a reservation, the new location is pointed by result */
-	int checkin(slot *startingNode, slot **result, pthread_mutex_t *mutex);
+	int checkin(slot *startingNode, slot *result, pthread_mutex_t *mutex);
 
 	/* Checkout, frees the reservation matching the currentNode->id */
 	int checkout(slot *currentNode, pthread_mutex_t *mutex);
+
+	/* Will return the current state for a reservation indicated by id and the result will be placed in resutNode */
+	int status(char *id, slot *resultNode);
 
 #endif

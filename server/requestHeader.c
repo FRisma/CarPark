@@ -7,12 +7,12 @@
 #include <string.h>
 #include <ctype.h>
 
-const char *kct				=	"Content-Type";
-const char *kcl				=	"Content-Length";
-const char *kget			=	"GET";
-const char *kpost			=	"POST";
-const char *kput			=	"PUT";
-const char *kdelete			=	"DELETE";
+const char *kct			=	"Content-Type";
+const char *kcl			=	"Content-Length";
+const char *kget		=	"GET";
+const char *kpost		=	"POST";
+const char *kput		=	"PUT";
+const char *kdelete		=	"DELETE";
 
 #define debug 0
 
@@ -67,14 +67,13 @@ int requestHeader(int sd, http_request *req) {
 		// ---------------------------- END HEADER PARSE -----------------------------------	
 		
 		/* Body */
-		if (0 < req->content_length && (req->method == POST || req->method == PUT)) {
+		if ( (req->method == POST || req->method == PUT) && req->content_length > 0 ) {
 			memset(aux,'\0',sizeof(aux));
 			if ( parse("\r\n\r\n.*",buffer,4,aux) < 0){
 				write(STDERR_FILENO,parseError,strlen(parseError));
 				return -1;
 			}
-			//aux[strlen(aux)-1]='\0';
-			req->body = (char *)malloc(req->content_length);
+			req->body = (char *)malloc(req->content_length + 1);
 			strncpy(req->body,aux,req->content_length);
 			if (debug) printf("processRequest - BODY: %s\n",req->body);
 		}
@@ -116,13 +115,10 @@ int parseHeaderLine (char *line, http_request *req) {
 		filtered[j] = line[i];
 		j++;
 	}
-	printf("posta es: %s\n",filtered);
 
 	char *key, *value, *ptr = NULL;
 	key = strtok_r(filtered,":",&ptr);
 	value = strtok_r(NULL,": \r\n",&ptr);
-	printf("\tKey es: %s\n",key);
-	printf("\tValue es: %s\n",value);
 		
 	if ( key != NULL && value != NULL ) {
 		if ( 0 == strcasecmp(kct,key) ) {
@@ -134,10 +130,10 @@ int parseHeaderLine (char *line, http_request *req) {
 			if (debug) printf("processRequest - CL: %li\n",req->content_length);
 		}
 		else if ( 0 == strcasecmp("Host",key) ) {
-			printf("H Resultado: %s\n",value);
+			printf("Host: %s\n",value);
 		}
 		else if ( 0 == strcasecmp("Accept",key) ) {
-			printf("A Resultado: %s\n",value);
+			printf("Accept: %s\n",value);
 		}
 	}
 	return 0;
