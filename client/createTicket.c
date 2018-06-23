@@ -14,7 +14,7 @@ int createTicket(int socketDescriptor) {
 	char httpResponse[512]; //Esto tiene que ser un puntero para poder escribirlo en la funcion dispach
 	char body[256];
 
-	slot s1;
+	slot s1 = {'\0'};
 	s1.idCli = 1;
 	
 	if ( -1 == serialize(s1,body) ) {
