@@ -8,6 +8,8 @@
 
 #define debug 0
 
+const char *kClientName = "Puerta1";
+
 int createTicket(int socketDescriptor) {
 
 	char httpRequest[512];
@@ -15,7 +17,7 @@ int createTicket(int socketDescriptor) {
 	char body[256];
 
 	slot s1 = {'\0'};
-	s1.idCli = 1;
+	strncpy(s1.idCli,kClientName,strnlen(kClientName,10));
 	
 	if ( -1 == serialize(s1,body) ) {
 		perror("Something went wrong serializing");

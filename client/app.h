@@ -15,13 +15,16 @@
 		char port[MAX_PORT_LENGTH];
 	}clientConf;
 
-	typedef struct Positions {
+	typedef struct slot{
 		long int id;
 		bool available;
-		long int idCli;
+		char idCli [10];
 		int floor;
 		size_t offset;
 		struct tm *checkInTime;
+		struct tm *checkOutTime;
+		char bill [16];
+		struct slot *next;
 	}slot;
 
 	int establishConnection(int *sd, clientConf *conf);
