@@ -16,7 +16,7 @@ void optionsHandler (int argc, char* const argv[], configuration *conf) {
 
 
 	//Chequear si fue iniciado con algun argumento, sino, salir
-	if (2 != argc) {
+	if (1 == argc) {
 		write(STDERR_FILENO,"No enough args\n",15);
 		exit(EXIT_FAILURE);
 	}
