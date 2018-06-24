@@ -49,7 +49,6 @@ int main (int argc, char *const argv[]) {
 	}
 
 	// Muero
-	puts("Adios");
 	close(socketDescriptor);
 	free(conf);
 
