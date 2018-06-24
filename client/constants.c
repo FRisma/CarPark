@@ -12,8 +12,9 @@ const char *HTTP_GET = "GET %s HTTP/1.1\r\n\r\n";
 
 const char *HTTP_DELETE = "DELETE %s HTTP/1.1\r\n\r\n";
 
-
 const char *CT_JSON = "application/json";
+
+const char *CT_TEXT = "text/plain";
 
 /*
 const unsigned int MAX_IP_LENGTH = 16;

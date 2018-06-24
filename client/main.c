@@ -36,16 +36,36 @@ int main (int argc, char *const argv[]) {
 	switch (conf->opt) {
 		case 'c':
 			if (debug) puts("Crear");
-			createTicket(socketDescriptor);
+			if ( -1 == createTicket(socketDescriptor) ) {
+				write(STDERR_FILENO,"Error: createTicket\n",20);
+				close(socketDescriptor);
+				free(conf);
+				return -1;
+			}
 			break;
 		case 'd':
 			if (debug) puts("Eliminar");
-			deleteTicket(socketDescriptor,conf->slotId);
+			if ( -1 == deleteTicket(socketDescriptor,conf->slotId) ) {
+				write(STDERR_FILENO,"Error: createTicket\n",20);
+				close(socketDescriptor);
+				free(conf);
+				return -1;
+			}
 			break;
 		case 's':
 			if (debug) puts("Status");
-			statusTicket(socketDescriptor,conf->slotId);
+			if (-1 == statusTicket(socketDescriptor,conf->slotId) ) {
+				write(STDERR_FILENO,"Error: createTicket\n",20);
+				close(socketDescriptor);
+				free(conf);
+				return -1;
+			}
 			break;
+		default:
+			write(STDERR_FILENO,"Metodo de trabajo invalido\n",27);
+			close(socketDescriptor);
+			free(conf);
+			return -1;
 	}
 
 	// Muero

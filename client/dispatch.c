@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define debug 1
+#define debug 0
 
 int dispatch(int sd, char *req, char *resp) {
 
@@ -23,7 +23,6 @@ int dispatch(int sd, char *req, char *resp) {
 		}
 		strncpy(resp,buff,strnlen(buff,sizeof(buff)));
 		if (debug) write(STDOUT_FILENO,buff,leido);
-		//algun mecanismo para realloc del puntero y appendearle la siguiente lectura
 	}
 
 	return 0;

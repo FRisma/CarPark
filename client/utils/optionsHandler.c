@@ -14,8 +14,14 @@
 
 void optionsHandler (int argc, char* const argv[], configuration *conf) {
 
-    int opt = 0;
 
+	//Chequear si fue iniciado con algun argumento, sino, salir
+	if (2 != argc) {
+		write(STDERR_FILENO,"No enough args\n",15);
+		exit(EXIT_FAILURE);
+	}
+
+	int opt = 0;
     // Argument handling
     opterr=1;   // Disables getopt() error printing.
 	while ((opt = getopt(argc, argv, "cd:s:h")) >= 0 ){ // -c create -d delete -s status -h help

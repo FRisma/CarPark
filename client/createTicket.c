@@ -28,7 +28,7 @@ int createTicket(int socketDescriptor) {
 	char resource[] = "/slots";
 	size_t body_len = strnlen(body,sizeof(body)) + 1;
 	int blDigits = floor(log10(abs(body_len))) + 1;
-	snprintf(httpRequest, strlen(HTTP_POST) + strlen(resource) + strlen(CT_JSON) + blDigits + body_len + 1, HTTP_POST, resource, CT_JSON, body_len, body);
+	snprintf(httpRequest, strlen(HTTP_POST) + strlen(resource) + strlen(CT_TEXT) + blDigits + body_len + 1, HTTP_POST, resource, CT_TEXT, body_len, body);
 
 	//Hace la llamada
 	if (-1 == dispatch(socketDescriptor,httpRequest,httpResponse) ) {
