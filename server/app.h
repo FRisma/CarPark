@@ -4,6 +4,7 @@
 	#include "macros.h"
 	#include "utils/utils.h"
 	#include "requestHeader.h"
+	#include "response.h"
 	#include <mqueue.h>
 	#include <pthread.h>
 	#include <stddef.h>
@@ -17,10 +18,12 @@
 	typedef struct slot{
 		long int id;
 		bool available;
-		long int idCli;
+		char idCli [10];
 		int floor;
 		size_t offset;
 		struct tm *checkInTime;
+		struct tm *checkOutTime;
+		char bill [16];
 		struct slot *next;
 	}slot;
 
@@ -69,13 +72,31 @@
 	/* Funcion que ejecuta cada hilo por cada nueva conexion */
 	void *threadWork(void *data);
 
+	/* Will convert a slot into a stram of bytes */
+	int serialize(slot result, char *stream);
+
+	/* Will convert a stream of bytes into a slot */
+	int deserialize(char *stream, slot **result);
+
+	/* Will parse uri to  return a slotId as a char * for those requests that
+	 * sends the id in the url instead of the body
+	 */
+	long int slotIdFromURI(char *uri);
+
 	/* Checkin, looks for an available slot and makes a reservation, the new location is pointed by result */
-	int checkin(slot *startingNode, slot *result, pthread_mutex_t *mutex);
+	int checkin(slot *startingNode, slot **result, pthread_mutex_t *mutex);
 
 	/* Checkout, frees the reservation matching the currentNode->id */
-	int checkout(slot *currentNode, pthread_mutex_t *mutex);
+	int checkout(slot *startingNode, slot **currentNode, pthread_mutex_t *mutex);
 
-	/* Will return the current state for a reservation indicated by id and the result will be placed in resutNode */
-	int status(char *id, slot *resultNode);
+	/* Will return the current state for a reservation indicated by slotId and the result will be placed in resutNode */
+	int status(slot *startingNode, slot **resultNode, long int slotId);
+
+	/* Performs the billing taking into consideration the checkInTime and the currentTime.
+	 * The result will be stored in the same slot sructure */
+	int billing(slot *current);
+
+	/* Sends the response to the descriptor identified by sd*/
+	int dispatchResponse(int sd, http_response *response);
 
 #endif

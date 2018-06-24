@@ -14,7 +14,7 @@
 #include <pthread.h>
 #include <netdb.h>
 
-#define debug 1
+#define debug 0
 
 int runServer(serverConf *conf) {
 

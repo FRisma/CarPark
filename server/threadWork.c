@@ -6,14 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-//static char * const e403_code="HTTP/1.0 403 FORBIDDEN\r\nContent-Type: text/html\n\n<html>\n<body>\n403 Access Denied\n</body>\n</html>";
-static char * const e403_message="<html>\n<body>\n403 You don't have permission to view this file\n</body>\n</html>";
-static char * const e404_message="<html>\n<body>\n404 File not found\n</body>\n</html>";
-static char * const e500_message="<html>\n<body>\n500 Something went terribly wrong\n</body>\n</html>";
-
-static char * const errorTemplate="HTTP/1.0 %s\r\nContent-Type: text/html\n\n%s";
-
-#define debug 0
+#define debug 1
 
 void* threadWork(void *data) {
 	
@@ -27,18 +20,18 @@ void* threadWork(void *data) {
 	pthread_mutex_t *mutex = arg->sincro;
 	
 	struct slot *start = arg->start; // HEAD
-	//free(data);	
+	free(data); //No debo liberar data en este punto porque tengo otros punteros que apuntan a su contenido
 	
 	if (debug) {
 		printf("ThreadArgs->connectionSD:%d threadArgs->mqd:%d\n",sd, mq);
 		struct slot *tmp = start;
 		do {
 			printf("T Nodo: %li\n", tmp->id);
-			tmp->id = 3;
 			tmp = tmp->next;
 		}while(tmp->next != NULL);
 	}
-	
+
+	/* ------------------- Request Handing ------------------------- */
 	http_request *req = (http_request *)malloc(sizeof(http_request));
 	if ( 0 > requestHeader(sd,req)) {
 		close(sd);
@@ -50,44 +43,102 @@ void* threadWork(void *data) {
 		printf("Request\n\tMT: %d\n\tRS: %s\n\tCT: %s\n\tCL: %li",req->method, req->resource, req->content_type, req->content_length);
 		if (req->body) printf("Request - BO: %s\n",req->body);
 	}
-	//free(req->body);
 
-	struct slot *result = NULL; // Pointer to the result
-	// Hacer el trabajo
+	/* ------------------- Response Handling ------------------------- */
+	int http_resp_code = 0;
+	struct slot *result = (slot*)malloc(sizeof(slot)); // Pointer to the result
+	memset(result,'\0',sizeof(result));
+	
 	switch (req->method) {
-		case POST: //buscar un lugar libre
-			checkin(start,result,mutex);
-			if (NULL == result) {
+		case POST:
+			deserialize(req->body, &result); // Map body to slot
+			checkin(start,&result,mutex);
+			if (NULL == result) { //TODO this if is not working
 				puts("No more places");
+				http_resp_code = kHttp204;
 			} else {
-				printf("Asignado Nodo: %li disp:%d hora:%s\n hilo:%li\n", result->id, result->available, asctime(result->checkInTime), pthread_self());
+				printf("Asignado Nodo:%li disp:%d hora:%s hilo:%li\n", result->id, result->available, asctime(result->checkInTime), pthread_self());
+				http_resp_code = kHttp201;
 			}
 			break;
-		case GET: // Si viene un id en resource es porque esta consultando el estado
-			puts("Status de una reserva");
-			//status();
+		case GET:
+			if (debug) printf("Status reserva: %s\n",req->resource);
+			long int idGet = slotIdFromURI(req->resource);
+			if (-1 != idGet) {
+				status(start,&result,idGet);
+				if (0 < result->id) {
+					billing(result);
+					http_resp_code = kHttp200;
+					if (debug) printf("GET Result Nodo:%li idCli:%s Disp:%d\n", result->id, result->idCli, result->available);
+				} else { // ID not found
+					write(STDERR_FILENO,"ID not found\n",13);
+					http_resp_code = kHttp404;
+				}
+			} else { // ID invalid
+				http_resp_code = kHttp400;
+				write(STDERR_FILENO,"No valid slotId\n",16);
+			}
 			break;
-		case DELETE: // Si o si el delete tiene que venir acompaÃado de un req->resource con un id
-			puts("Delete una reserva");
-			//checkout(node, mutex);
+		case DELETE:
+			if (debug) printf("Delete reserva: %s\n",req->resource);
+			long int idDelete = slotIdFromURI(req->resource);
+			if (-1 != idDelete) {
+				slot pos = {'\0'};
+				pos.id = idDelete;
+				checkout(start, &pos, mutex); //TODO this is failing
+				if (0 < result->id) {
+					billing(result);
+					http_resp_code = kHttp200;
+					if (debug) printf("serialize Nodo:%li idCli:%s Disp:%d\n", result->id, result->idCli, result->available);
+				} else { // ID not found
+					write(STDERR_FILENO,"ID not found\n",13);
+					http_resp_code = kHttp404;
+				}
+			} else { // ID invalid
+				http_resp_code = kHttp404;
+				write(STDERR_FILENO,"No valid slotId\n",16);
+			}
 			break;
-		default:
-			puts("Not implemented yet");
-			//Todavia no se implementa
+		default: // Todavia no se implementa
+			write(STDERR_FILENO,"Method Not implemented yet\n",21);
+			http_resp_code = kHttp501;
+	}
+
+	//char serializedResult[] = "#:10001|a:0|c:HardCoded1|f:7|o:56|t:21:33";
+	char serializedResult[256] = {'\0'};
+	if ( -1 == serialize(*result,serializedResult) ) {
+		write(STDERR_FILENO,"something went wrong when serializing\n",34);
+		http_resp_code = kHttp500;
+	}
+	http_response *rpn = (http_response *)malloc(sizeof(http_response));
+	if ( 0 > response(http_resp_code, serializedResult, &rpn) ) {
+		write(STDERR_FILENO,"response error\n",15);
+		close(sd);
+		free(req);
+		free(rpn);
+		pthread_exit(NULL);
+	}
+
+	puts("Luego de crear el response");
+	if (debug) {
+		printf("Response\n\tCODE: %d\n\tSTATUS: %s\n",rpn->code, rpn->statusM);
+		if (rpn->body) printf("Response - BO: %s\n",rpn->body);
 	}
 	
-	//createResponse();
-
-	if ( 0 > write(sd,"HTTP 200 OK\r\n\r\n",15) ) {
-			perror("Thread - write");
-			free(req);
-			close(sd);
-			pthread_exit(NULL);
+	puts("a punto de llamar a dispatchResponse");
+	if ( -1 == dispatchResponse(sd,rpn) ) {
+		write(STDERR_FILENO,"no se pudo enviar la respuesta\n",31);
+		free(req->body);
+		free(req);
+		free(rpn);
+		free(result);
+		close(sd);
 	}
 
+	if ( -1 == close(sd) ) { perror("close socket desc"); }
 
-	if ( -1 == close(sd) ) { perror("close"); }
-
+	puts("entro a la logica de la cola de mensajes");
+	/* ---------------------------------- Message Queue --------------------------------------- */
 	/* using mq_timesend because if the queue is full we don't want to block the thread for a long period of time */
 	if (0 < mq) {
 		struct timespec waitTime = {0};
@@ -98,43 +149,10 @@ void* threadWork(void *data) {
 		}
 	}
 
+	/* --------------------------------- Cleanup -------------------------------------------- */
+	free(req->body);
 	free(req);
+	free(rpn);
+	free(result);
 	pthread_exit(NULL);
 }
-	
-	/*							
-		switch ( request(buffer,arg->droot,newSocketDescriptor) ){
-			case 200: // Termina exitosamente
-				if (debug) puts("200OK File served");
-				break;
-			case 404: // Archivo no encontrado
-				if (debug) puts("File not found");
-				if ( snprintf(responseHeader,strlen(e404_code)+strlen(e404_message)+37,errorTemplate,e404_code,e404_message) < 0 ) {
-					perror("snprintf error404");
-				}
-				if ( write(newSocketDescriptor,responseHeader,strlen(responseHeader)) < 0){
-					perror("write 404");
-				}
-				break;
-			case 403: // Forbidden
-				if (debug) puts("File permissions issue");
-				if ( snprintf(responseHeader,strlen(e403_code)+strlen(e403_message)+37,errorTemplate,e403_code,e403_message) < 0 ) {
-					perror("snprintf erro403");
-				}		
-				if ( write(newSocketDescriptor,responseHeader,strlen(responseHeader)) < 0){
-					perror("write 403");
-				}
-				break;
-			case 500: // Problemas del server
-			default:
-				if (debug) puts("Something went wrong");
-				if ( snprintf(responseHeader,strlen(e500_code)+strlen(e500_message)+37,errorTemplate,e500_code,e500_message) < 0 ) {
-					perror("snprintf error500");
-				}
-				if ( write(newSocketDescriptor,responseHeader,strlen(responseHeader)) < 0){
-					perror("write 500");
-				}
-				break;
-		}
-
-		*/
