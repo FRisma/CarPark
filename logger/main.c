@@ -13,19 +13,17 @@
 #define MSG_KEY_STOP "__STOP__LOGGING__"
 #define debug 1
 
+const char * kMessageQueueName = "carpark_log_queue";
+
 int main (int argc, char *const argv[]) {
 	
 	puts("\t\t ..:: Trabajo Final - Computacion II - CarPark Activity Logging ::..");
 
-	if (2 != argc) {
-		write(STDERR_FILENO,"No enough args\n",15);
-		exit(EXIT_FAILURE);
-	}
 	char mq_name[255] = {'\0'};
 	char tmp[255] = {'\0'};
 	
 	/* mq_overview() set to 255 the max of the mq name */
-	strncpy(tmp, argv[1], strnlen(argv[1],255));
+	strncpy(tmp, kMessageQueueName, strnlen(kMessageQueueName,255));
 	snprintf(mq_name,strlen(tmp)+2,"/%s",tmp);
 
 	mqd_t mq;
@@ -45,6 +43,7 @@ int main (int argc, char *const argv[]) {
 		perror("mq_open");
 		exit(EXIT_FAILURE);
 	}
+	if (debug) printf("Queue descriptor: %d\n", mq);
 
 	/* Open-Create the file in the filesysistem */
 	int fd = 0; 
