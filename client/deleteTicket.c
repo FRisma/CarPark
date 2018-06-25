@@ -21,5 +21,7 @@ int deleteTicket(int socketDescriptor, char *slotId) {
 		return -1;
 	}
 
+	if (debug) printf("Dar de baja la posicion %s resultado:\n%s\n",slotId,httpResponse);
+	
 	return 0;
 }

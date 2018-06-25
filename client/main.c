@@ -54,7 +54,7 @@ int main (int argc, char *const argv[]) {
 			break;
 		case 's':
 			if (debug) puts("Status");
-			if (-1 == statusTicket(socketDescriptor,conf->slotId) ) {
+			if ( -1 == statusTicket(socketDescriptor,conf->slotId) ) {
 				write(STDERR_FILENO,"Error: createTicket\n",20);
 				close(socketDescriptor);
 				free(conf);

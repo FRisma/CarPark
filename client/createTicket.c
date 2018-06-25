@@ -37,7 +37,7 @@ int createTicket(int socketDescriptor) {
 
 	// Convertir el http response a una estructura slot - En este punto ya no es necesario debido a que mostramos por
 	// pantalla la respuesta y termina. 
-	printf("Nueva posicion asignada %s\n",httpResponse);
+	printf("Nueva posicion asignada\n%s\n",httpResponse);
 	
 	return 0;
 }

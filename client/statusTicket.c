@@ -21,5 +21,7 @@ int statusTicket(int socketDescriptor, char *slotId) {
 		return -1;
 	}
 
+	printf("El estado actual de la posicion %s es\n%s\n",slotId,httpResponse);
+	
 	return 0;
 }

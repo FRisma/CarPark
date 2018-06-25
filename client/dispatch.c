@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define debug 0
+#define debug 1
 
 int dispatch(int sd, char *req, char *resp) {
 
@@ -23,6 +23,7 @@ int dispatch(int sd, char *req, char *resp) {
 		}
 		strncpy(resp,buff,strnlen(buff,sizeof(buff)));
 		if (debug) write(STDOUT_FILENO,buff,leido);
+		if (debug) write(STDOUT_FILENO,"\n",1);
 	}
 
 	return 0;
