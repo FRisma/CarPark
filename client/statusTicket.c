@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-const char *kStatusURI = "slot/%s";
+const char *kStatusURI = "/slots/%s";
 
 #define debug 0
 

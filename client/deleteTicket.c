@@ -6,7 +6,7 @@
 
 #define debug 0
 
-const char *kDeleteURI = "slot/%s";
+const char *kDeleteURI = "/slots/%s";
 
 int deleteTicket(int socketDescriptor, char *slotId) {
 
