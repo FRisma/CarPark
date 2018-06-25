@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define debug 0
+#define debug 1
 
 int parkingManager(char *configFile) {
 
@@ -21,9 +21,6 @@ int parkingManager(char *configFile) {
 	}
 	srvConf->protocol = 4; // Esto deberia ser parametrizable
 
-	// Arranco el proceso de logging indicandole el nombre de la cola como argumento
-	//startLoggingProcess(srvConf->mqName);
-
 	// Creo el socket
 	if ( 0 > protocol_handler(srvConf->protocol, &srvConf->socketDescriptor, srvConf->port) ) {
 		perror("No se pudo configurar el socket");
@@ -34,14 +31,14 @@ int parkingManager(char *configFile) {
 
 	// Creo la cola de mensajes
 	srvConf->mqd = -1;
-	printf("Abro la cola %s\n",srvConf->mqName);
+	if (debug) printf("Abro la cola %s\n",srvConf->mqName);
 	if ( -1 == (srvConf->mqd = mq_open(srvConf->mqName, O_WRONLY)) ) {
 		perror("mq_open");
-		printf("The message queue %s was not found, so no activity logging will be done",srvConf->mqName);
+		printf("The message queue %s was not found, so no activity logging will be done\n",srvConf->mqName);
 	}
 
 	//Iniciar el parking server
-	if (debug) printf("Iniciando parking server - Protocol: ipv%d, Socket: %d, Port: %s\n", srvConf->protocol, srvConf->socketDescriptor, srvConf->port);
+	if (debug) printf("Starting parking server - Protocol: ipv%d, Socket:%d, Port:%s MQD:%d\n", srvConf->protocol, srvConf->socketDescriptor, srvConf->port, srvConf->mqd);
 	if ( 0 > runServer(srvConf) ) {
 		perror("Algo salio mal en runServer");
 		mq_close(srvConf->mqd);
@@ -49,7 +46,7 @@ int parkingManager(char *configFile) {
 		free(srvConf);
 		return -1;
 	}
-	
+
 	puts("Saliendo");
 	mq_close(srvConf->mqd);
 	close(srvConf->socketDescriptor);

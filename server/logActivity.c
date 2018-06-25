@@ -40,9 +40,11 @@ int logActivity(mqd_t messageQueue, http_request req, int mode) {
 				strcpy(displayMethod,"UPDATE");
 				break;
 		}
+		if (debug) printf("logActivity method %s\n",displayMethod);
+		if (debug) printf("logActivity resource %s\n",req.resource);
 		
 		snprintf(message,\
-				7 + strlen(displayMethod) + strlen(req.resource) + 5 + 1,\
+				7 + strlen(displayMethod) + strlen(req.resource) + 5 + 29 + 1,\
 				kMessageTemplate,\
 				"puertax",displayMethod,req.resource,"00:00");
 

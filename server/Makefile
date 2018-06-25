@@ -4,7 +4,7 @@ CC := gcc $(CFLAGS)
 
 all: $(TARGETS)
 
-server: main.c parkingManager.c configServer.c startLoggingProcess.c\
+server: main.c parkingManager.c configServer.c\
 	createLocations.c freeLocations.c runServer.c threadWork.c requestHeader.c\
 	checkin.c checkout.c status.c slotIdFromURI.c deserialize.c serialize.c billing.c\
 	response.c dispatchResponse.c logActivity.c listLocations.c printLocation.c\

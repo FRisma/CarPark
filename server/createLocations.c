@@ -9,12 +9,16 @@
 
 int createLocations(slot **startingNode) {
 
-	struct slot *tmp;
+	struct slot *tmp = NULL;
 	int nodes = 10;
 	int loop = 0;
 	
 	for (loop = 0; loop < nodes; loop++) {
-		slot *newSlot = (slot *)malloc(sizeof(slot));
+		slot *newSlot = NULL;
+		if ( NULL == (newSlot = (slot *)malloc(sizeof(slot))) ) {
+			perror("malloc");
+			return -1;
+		}
 		newSlot->id 			= loop+10000;
 		newSlot->available 		= true;
 		newSlot->floor 			= 0;
@@ -30,7 +34,7 @@ int createLocations(slot **startingNode) {
 		if (0 == loop) {
 			*startingNode = newSlot;
 		}
-		if (tmp) {
+		if (NULL != tmp) {
 			tmp->next = newSlot;
 		}
 		tmp = newSlot;

@@ -38,10 +38,10 @@
 
 	// Estructura de datos para los hilos
 	typedef struct {
-		int csd;				/* Socket descriptor */
-		mqd_t mqd; 				/* Message queue descriptor */
+		int csd;				 /* Socket descriptor */
+		mqd_t mqd; 				 /* Message queue descriptor */
 		pthread_mutex_t *sincro; /* Mutex for managing concurrency when accessing the linked list */
-		slot *start; 			/* Points to the begining of a linkedlist allocated in the heap to be shared by the threads */
+		slot *start; 			 /* Points to the begining of a linkedlist allocated in the heap to be shared by the threads */
 	}threadData;
 
 	/* Esta es la funcion inicial que crea el contexto necesario para el funcionamiento, crea la cola de mensajes,
@@ -52,11 +52,6 @@
 
 	/* Abre el archivo de configuracion y parsea la informacion para escribir el resultado en port y mqName */
 	int configServer(char *cfgfile, char *port, char *mqName);
-
-	/* Launches the logging process on a different process, this will fork.
-	 * The arg will be the name of the message queue the new process will try to open
-	 */
-	int startLoggingProcess(char *arg);
 
 	/* Create a linked list for the slots */
 	int createLocations(slot **startingNode);
