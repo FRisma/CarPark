@@ -7,14 +7,14 @@
 #include <string.h>
 #include <ctype.h>
 
+#define debug 1
+
 const char *kct			=	"Content-Type";
 const char *kcl			=	"Content-Length";
 const char *kget		=	"GET";
 const char *kpost		=	"POST";
 const char *kput		=	"PUT";
 const char *kdelete		=	"DELETE";
-
-#define debug 0
 
 // Prototype
 int parseMethodAndResource(char *line, http_methods *method, char *resource);
@@ -28,7 +28,7 @@ int requestHeader(int sd, http_request *req) {
 	char header[1024] = {'\0'};;
 	char aux[1024] = {'\0'};
 
-	char *tmp, *ptr;
+	char *tmp, *ptr = NULL;
 
 	while( (leido = read(sd,buffer,sizeof(buffer))) > 0 ) {
 		if (-1 == leido) {
@@ -73,7 +73,11 @@ int requestHeader(int sd, http_request *req) {
 				write(STDERR_FILENO,parseError,strlen(parseError));
 				return -1;
 			}
-			req->body = (char *)malloc(req->content_length + 1);
+			if ( NULL == (req->body = (char *)malloc(req->content_length + 1)) ) {
+				perror("malloc");
+				return -1;
+			}
+			memset(req->body,'\0',(req->content_length + 1));
 			strncpy(req->body,aux,req->content_length);
 			if (debug) printf("processRequest - BODY: %s\n",req->body);
 		}

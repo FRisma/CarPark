@@ -9,6 +9,8 @@ int freeLocations (slot *start) {
 		tmp = start;
 		start = start->next;
 		if (tmp != NULL) {
+			free(tmp->checkInTime);
+			free(tmp->checkOutTime);
 			free(tmp);
 		}
 	}

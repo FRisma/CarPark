@@ -15,6 +15,6 @@
 		char body[1024];
 	}http_response;
 
-	int response(int code, char *body, http_response **resp);
+	int response(int code, char *body, http_response *resp);
 
 #endif

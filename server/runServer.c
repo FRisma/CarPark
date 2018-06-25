@@ -40,6 +40,7 @@ int runServer(serverConf *conf) {
 	free(conf);
 	if ( 0 > listen(socket,5) ) {
 		freeLocations(locStart);
+		free(mutex);
 		perror("listen");
 		return -1;
 	}
@@ -68,6 +69,7 @@ int runServer(serverConf *conf) {
 	}
 
 	close(socket);
+	free(mutex);
 	freeLocations(locStart);
 	//close(tdata.mqd);
 	return 0;

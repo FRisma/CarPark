@@ -64,6 +64,12 @@
 	/* Frees the memory allocated by createLocations */
 	int freeLocations(slot *startingNode);
 
+	/* Prints the complete node list */
+	void listLocations(slot *start);
+	
+	/* Prints in a friendly way a single slot */
+	void printLocation(slot *s);
+
 	/* Se crea el contexto necesario para el funcionamiento de los hilos, se pone el socket a escuchar y finalmente ante
 	 * cada nueva conexion al socket, se llama a la funcion que atiende a cada cliente.
 	 */
@@ -84,19 +90,25 @@
 	long int slotIdFromURI(char *uri);
 
 	/* Checkin, looks for an available slot and makes a reservation, the new location is pointed by result */
-	int checkin(slot *startingNode, slot **result, pthread_mutex_t *mutex);
+	int checkin(slot *startingNode, slot *result, pthread_mutex_t *mutex);
 
-	/* Checkout, frees the reservation matching the currentNode->id */
-	int checkout(slot *startingNode, slot **currentNode, pthread_mutex_t *mutex);
+	/* Checkout, frees the reservation matching the result->id */
+	int checkout(slot *startingNode, slot *result, pthread_mutex_t *mutex);
 
-	/* Will return the current state for a reservation indicated by slotId and the result will be placed in resutNode */
-	int status(slot *startingNode, slot **resultNode, long int slotId);
+	/* Will return the current state for a reservation indicated by slotId and the result will be placed in result */
+	int status(slot *startingNode, slot *result, long int slotId);
 
 	/* Performs the billing taking into consideration the checkInTime and the currentTime.
 	 * The result will be stored in the same slot sructure */
 	int billing(slot *current);
 
 	/* Sends the response to the descriptor identified by sd*/
-	int dispatchResponse(int sd, http_response *response);
+	int dispatchResponse(int sd, http_response resp);
+
+	/* Send a message to que queue described by messageQueue. Mode specifies if
+	 * it is possible that the delivery is tolerant to failure. If mode is 1, it
+	 * will fail if it can't send the message. If mode is 0, will try to send
+	 * the message only for a period of time.*/
+	int logActivity(mqd_t messageQueue, http_request req, int mode);
 
 #endif

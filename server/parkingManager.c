@@ -51,5 +51,8 @@ int parkingManager(char *configFile) {
 	}
 	
 	puts("Saliendo");
+	mq_close(srvConf->mqd);
+	close(srvConf->socketDescriptor);
+	free(srvConf);
 	return 0;
 }

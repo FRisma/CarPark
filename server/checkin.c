@@ -1,13 +1,14 @@
 #include "app.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <pthread.h>
 #include <time.h>
 
-#define debug 0
+#define debug 1
 
 /*
  * El resultado podria ser un puntero al nodo que se reserva
@@ -18,39 +19,37 @@
  * perteneciente SOLAMENTE al hilo que lo ejecute, y de esa manera garantizamos
  * la integridad de el resultado
  */
-int checkin(struct slot *start, struct slot **result, pthread_mutex_t *mutex) {
+int checkin(struct slot *start, struct slot *result, pthread_mutex_t *mutex) {
 
-	if (debug) printf("Entro a checkin con un slot desde el cliente: %s\n",(*result)->idCli);
+	if (debug) printf("Entro a checkin con un slot desde el cliente: %s\n",result->idCli);
 
-	time_t rawtime;
 	struct slot *node = start;	
 	if ( 0 != pthread_mutex_lock(mutex) ) {
 		perror("pthread_mutex_lock");
 		return -1;
 	}
 	do {
-		if (debug) printf("Nodo:%li idCli:%s Disp:%d hilo:%li\n", node->id, node->idCli, node->available, pthread_self());
 		if (true == node->available) {
-			time(&rawtime);
-			node->available 			= 	false;
-			strcpy(node->idCli,(*result)->idCli);
-			node->checkInTime 			= 	localtime(&rawtime);
-			//node->checkOutTime 			= 	{'\0'};
-			memset(node->bill,'0',sizeof(node->bill));
-			/*
-			(*result)->id 				=	node->id;
-			(*result)->available 		= 	false;
-			(*result)->idCli 			= 	node->idCli;
-			(*result)->floor 			= 	node->floor;
-			(*result)->offset 			= 	node->offset;
-			(*result)->checkInTime 		= 	node->checkInTime;
-			(*result)->checkOutTime 	= 	node->checkOutTime;
-			strcpy((*result)->bill,node->bill);
-			*/
-			//if (debug) printf("Asignando Nodo:%li idCli:%s hora:%s hilo:%li\n",(*result)->id, (*result)->idCli, asctime(node->checkInTime), pthread_self());
+			time_t *rawtime = (time_t *)malloc(sizeof(time_t));
+			time(rawtime);
+			node->checkInTime 		= 	localtime(rawtime);
+			node->available 		= 	false;
+			node->checkOutTime 		= 	NULL;
+			strncpy(node->idCli,result->idCli,strlen(result->idCli));
+			// Maping to result
+			result->id 				=	node->id;
+			result->available 		= 	false;
+			result->floor 			= 	node->floor;
+			result->offset 			= 	node->offset;
+			result->checkInTime 	= 	node->checkInTime;
+			result->checkOutTime 	= 	NULL;
+			strcpy(result->idCli,node->idCli);
+			strcpy(result->bill,node->bill);
+			if (debug) { puts("checkin node:"); printLocation(result); }
 			break;
 		} else {
-			*result = node = node->next;
+			node = node->next;
+			result->id = -1;
 		}
 	}while(node != NULL);
 	if ( 0 != pthread_mutex_unlock(mutex) ) {
