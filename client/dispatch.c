@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define debug 1
+#define debug 0
 
 int dispatch(int sd, char *req, char *resp) {
 

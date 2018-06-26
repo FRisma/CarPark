@@ -36,8 +36,11 @@ int createTicket(int socketDescriptor) {
 	}
 
 	// Convertir el http response a una estructura slot - En este punto ya no es necesario debido a que mostramos por
-	// pantalla la respuesta y termina. 
-	printf("Nueva posicion asignada\n%s\n",httpResponse);
+	// pantalla la respuesta y termina.
+	slot result = {'\0'};
+	deserialize(httpResponse, &result);
+	printLocation(&result);
+	//printf("Nueva posicion asignada\n%s\n",httpResponse);
 	
 	return 0;
 }

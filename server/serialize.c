@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
@@ -16,13 +17,16 @@ int serialize(slot s, char *stream) {
 	int d_available 		= floor(log10(abs(s.available))) + 1;
 	int d_floor 			= floor(log10(abs(s.floor))) + 1;
 	int d_offset 			= floor(log10(abs(s.offset))) + 1;
-	char *displayInTime		= "00:00";
-	char *displayOutTime	= "00:00";
+	char displayInTime[80]	= "00:00\0";
+	char displayOutTime[80]	= "00:00\0";
 	if (s.checkInTime) {
-		displayInTime = asctime(s.checkInTime);
+		//strftime(displayInTime,80,"%x - %I:%M%p", s.checkInTime);
+		asctime_r(s.checkInTime,displayInTime);			// Thread safe
+		displayInTime[strlen(displayInTime) -1] = '\0'; // Replace last char whis is \n with \0 to avoid line break
 	}
 	if (s.checkOutTime) {
-		displayOutTime = asctime(s.checkOutTime);
+		asctime_r(s.checkInTime,displayOutTime);		  // Thread safe
+		displayOutTime[strlen(displayOutTime) -1] = '\0'; // Replace last char whis is \n with \0 to avoid line break
 	}
 	if (debug) {
 		puts("serialize node:");

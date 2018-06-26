@@ -7,7 +7,7 @@
 
 char * const kPattern = "#:%li|a:%d|c:%s|f:%d|o:%lu";
 
-#define debug 1
+#define debug 0
 
 int serialize(slot s, char *serialized) {
 

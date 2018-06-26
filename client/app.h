@@ -18,12 +18,12 @@
 	typedef struct slot{
 		long int id;
 		bool available;
-		char idCli [10];
+		char idCli[10];
 		int floor;
 		size_t offset;
-		struct tm *checkInTime;
-		struct tm *checkOutTime;
-		char bill [16];
+		char checkInTime[200];
+		char checkOutTime[200];
+		char bill[16];
 		struct slot *next;
 	}slot;
 
@@ -37,8 +37,14 @@
 
 	/* Convert the slot structre into a serialized string ready to be sent */
 	int serialize(slot s, char *serialized);
+
+	/* Conert a stream of bytes into a slot */
+	int deserialize(char *stream, slot *result);
 	
 	/* Send thru a sd descriptor the stream of bytes stored in req, the answer will be stored in resp */
 	int dispatch(int sd, char *req, char *resp);
+
+	/* Prints the location on the screen */
+	void printLocation(slot *s);
 
 #endif
