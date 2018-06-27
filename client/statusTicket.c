@@ -18,10 +18,27 @@ int statusTicket(int socketDescriptor, char *slotId) {
 	snprintf(httpRequest, strlen(HTTP_GET) + strlen(resource) + 1, HTTP_GET, resource); 
 
 	if (-1 == dispatch(socketDescriptor, httpRequest, httpResponse) ) {
+		write(STDERR_FILENO,"dispatch\n",9);
 		return -1;
 	}
 
-	printf("El estado actual de la posicion %s es\n%s\n",slotId,httpResponse);
+	slot result = {'\0'};
+	result.id = -1;
+	memset(result.idCli,'\0',10);
+	memset(result.checkInTime,'\0',200);
+	memset(result.checkOutTime,'\0',200);
+	memset(result.bill,'\0',16);
+	if (-1 == deserialize(httpResponse, &result)) {
+		write(STDERR_FILENO,"deserialize\n",12);
+		return -1;
+	}
+	
+	if (0 > result.id) {
+		printf("No se ha encontrado un nodo con el id %s\n",slotId);
+	} else {
+		puts("El estado del nodo es");
+		printLocation(&result);
+	}
 	
 	return 0;
 }

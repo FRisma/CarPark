@@ -4,12 +4,12 @@
 #include <string.h>
 #include <unistd.h>
 
-#define debug 0
+#define debug 1
 
 int dispatch(int sd, char *req, char *resp) {
 
-	char buff[2*1024];
-	int leido;
+	char buff[2*1024] = {'\0'};
+	int leido = 0;
 
 	if (debug) printf("El request es: %s\n",req);
 	if ( -1 == write(sd, req, strlen(req)) ) {

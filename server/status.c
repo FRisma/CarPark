@@ -8,7 +8,7 @@
 int status(struct slot *start, struct slot *result, long int nodeId) {
 
 	// Check si result tiene memoria reservada, sino salir
-	if (debug) printf("status for node %li\n",nodeId);
+	//if (debug) printf("status for node %li\n",nodeId);
 	struct slot *node = start;	
 	do {
 		if (node->id == nodeId) {

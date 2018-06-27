@@ -31,7 +31,7 @@ int parse (char *patron, char *buff, int offset, char *resultado){
 	}
 
 	if ( !(regexec(&retmp, buff ,(size_t) 1 , &mtmp, 0)) ){	
-		memset(resultado,'\0',strlen(resultado));
+		memset(resultado,'\0',strnlen(resultado,2*1024));
 		strncpy(resultado,buff+(mtmp.rm_so+offset),mtmp.rm_eo-(mtmp.rm_so+offset));
 		if (debug) printf("parse.c resultado: %s\n",resultado);
 		return 1; //Devuelve la cadena con un \n al final

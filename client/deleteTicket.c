@@ -18,10 +18,27 @@ int deleteTicket(int socketDescriptor, char *slotId) {
 	snprintf(httpRequest, strlen(HTTP_DELETE) + strlen(resource) + 1, HTTP_DELETE, resource); 
 
 	if (-1 == dispatch(socketDescriptor, httpRequest, httpResponse) ) {
+		write(STDERR_FILENO,"dispatch\n",9);
 		return -1;
 	}
 
-	if (debug) printf("Dar de baja la posicion %s resultado:\n%s\n",slotId,httpResponse);
+	slot result = {'\0'};
+	result.id = -1;
+	memset(result.idCli,'\0',10);
+	memset(result.checkInTime,'\0',200);
+	memset(result.checkOutTime,'\0',200);
+	memset(result.bill,'\0',16);
+	if (-1 == deserialize(httpResponse, &result)) {
+		write(STDERR_FILENO,"deserialize\n",12);
+		return -1;
+	}
+	
+	if (0 > result.id) {
+		printf("No se encuentra una posicion ocupada actualmente con para el id %s\n",slotId);
+	} else {
+		puts("Se dio de baja");
+		printLocation(&result);
+	}
 	
 	return 0;
 }

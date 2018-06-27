@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define debug 1
+#define debug 0
 
 const char * kMessageTemplate = "door:%s|method:%s|resource:%s|time:%s";
 

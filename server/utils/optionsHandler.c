@@ -17,7 +17,7 @@ void optionsHandler (int argc, char* const argv[], configuration *conf) {
     int opt;
 
 	// Configure default values
-	strncpy(conf->parkingServerCfgFile, DEFAULT_PARK_CONFIGFILE, strnlen(DEFAULT_PARK_CONFIGFILE,FILE_PATH_LENGHT)+1);
+	strncpy(conf->parkingServerCfgFile, DEFAULT_PARK_CONFIGFILE, strnlen(DEFAULT_PARK_CONFIGFILE,FILE_PATH_LENGTH)+1);
 
     // Argument handling
     opterr=1;   // Disables getopt() error printing.
@@ -25,7 +25,7 @@ void optionsHandler (int argc, char* const argv[], configuration *conf) {
 		switch (opt){
 			case 'p':
 				if (debug) printf("ParkConfig file: %s\n", optarg);
-				strncpy(conf->parkingServerCfgFile, optarg, strnlen(optarg,FILE_PATH_LENGHT)+1);
+				strncpy(conf->parkingServerCfgFile, optarg, strnlen(optarg,FILE_PATH_LENGTH)+1);
 				break;
 			case 'h':
 			case '?':

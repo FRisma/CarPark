@@ -14,7 +14,6 @@
 
 void optionsHandler (int argc, char* const argv[], configuration *conf) {
 
-
 	//Chequear si fue iniciado con algun argumento, sino, salir
 	if (1 == argc) {
 		write(STDERR_FILENO,"No enough args\n",15);
@@ -54,7 +53,7 @@ void optionsHandler (int argc, char* const argv[], configuration *conf) {
 				break;
 			case 'h':
 			case '?':
-				puts("-c ask for a creation of a new ticket -d ask for a ticket number to be finished -s status of a ticket -h help");
+				puts("-c ask for a creation of a new ticket\n-d {ticketId} ask for a ticket number to be finished\n-s {ticketId} status of a ticket\n-h help");
                 exit(EXIT_SUCCESS);
 			default:
 				puts("Sintaxis ambigua. Intente ejecutar con -h para mas detalles");

@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#define debug 1
+#define debug 0
 
 void* threadWork(void *data) {
 
@@ -110,7 +110,7 @@ void* threadWork(void *data) {
 			if (-1 != idDelete) {
 				result->id = idDelete;
 				if ( -1 != checkout(start, result, mutex) ) {
-					if (0 < result->id) {
+					if (-1 != result->id) {
 						billing(result);
 						http_resp_code = kHttp200;
 						if (debug) {

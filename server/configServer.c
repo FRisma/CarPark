@@ -40,7 +40,7 @@ int configServer(char *cfgfile, char *port, char *mqName) {
 		close(fd);
 		return -1;
 	}
-	mqName[strlen(mqName)-1]='\0';
+	mqName[strnlen(mqName,128)-1]='\0';
 	if (debug) printf("configServer - mqName: %s\n",mqName);
 
 	//Parse message queue name
@@ -49,7 +49,7 @@ int configServer(char *cfgfile, char *port, char *mqName) {
 		close(fd);
 		return -1;
 	}
-	port[strlen(port)-1]='\0';
+	port[strnlen(port,MAX_PORT_LENGTH)-1]='\0';
 	if (debug) printf("configServer - port: %s\n",port);
 	
 	if ( strnlen(port,MAX_PORT_LENGTH) < MIN_PORT_LENGTH || strnlen(port,9) > MAX_PORT_LENGTH || atoi(port) == 0 ) { //Puerto invalido

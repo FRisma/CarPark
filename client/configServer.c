@@ -17,8 +17,8 @@ int configServer(char *cfgfile, char *ip, char *port) {
 
 	if (debug) printf("configServer - cfg: %s\n",cfgfile);
 
-	char buff[BUFF_SIZE];
-	int fd;
+	char buff[BUFF_SIZE] = {'\0'};
+	int fd = 0;
 	
 	memset (buff,'\0',sizeof buff);
 	

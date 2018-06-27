@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <time.h>
 
-#define debug 0
+#define debug 1
 
 int checkout(struct slot *start, struct slot *result, pthread_mutex_t *mutex) {
 
@@ -15,8 +15,9 @@ int checkout(struct slot *start, struct slot *result, pthread_mutex_t *mutex) {
 		perror("pther_mutex_lock");
 		return -1;
 	}
+	int slotId = result->id;
 	do {
-		if ( result->id == node->id && node->available == false) {
+		if ( slotId == node->id && node->available == false) {
 			time_t *rawtime = (time_t *)malloc(sizeof(time_t));
 			time(rawtime);
 			// Maping to result

@@ -13,7 +13,13 @@ int main (int argc, char *const argv[]) {
 	puts("\t\t ..:: Trabajo Final - Computacion II - CarPark ::..");
 	
 	// Manejar opciones
-  	configuration *conf = (configuration *)malloc(sizeof(configuration));
+  	configuration *conf = NULL;
+	if ( NULL == (conf=(configuration *)malloc(sizeof(configuration))) ) {
+			perror("malloc");
+			return -1;
+	}
+	memset(conf,'\0',sizeof(configuration));
+	memset(conf->parkingServerCfgFile,'\0',FILE_PATH_LENGTH);
 	if (conf) {
 		optionsHandler(argc, argv, conf);
 		if (debug) printf("Parameters: ParkServer %s\n", conf->parkingServerCfgFile);

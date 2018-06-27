@@ -44,7 +44,7 @@
 	/* Send thru a sd descriptor the stream of bytes stored in req, the answer will be stored in resp */
 	int dispatch(int sd, char *req, char *resp);
 
-	/* Prints the location on the screen */
+	/* Prints the location on the screen. */
 	void printLocation(slot *s);
 
 #endif

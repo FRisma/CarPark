@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -13,11 +14,22 @@ int main (int argc, char *const argv[]) {
 	int socketDescriptor = 0;
 
 	// Manejo de opciones
-	configuration *conf = (configuration *)malloc(sizeof(configuration));
+	configuration *conf = NULL;
+	if ( NULL == (conf=(configuration *)malloc(sizeof(configuration))) ) {
+		perror("malloc");
+		return -1;
+	}
+	memset(conf,'\0',sizeof(configuration));
 	optionsHandler(argc, argv, conf);
 
 	// Configuro el cliente desde archivo
-	clientConf *servParams = (clientConf *)malloc(sizeof(configuration));
+	clientConf *servParams = NULL;
+	if ( NULL == (servParams =(clientConf*)malloc(sizeof(clientConf))) ) {
+		perror("malloc");
+		free(conf);
+		return -1;
+	}
+	memset(servParams,'\0',sizeof(clientConf));
 	if ( 0 > configServer("servidor.cfg",servParams->ip,servParams->port) ) {
 		free(conf);
 		free(servParams);

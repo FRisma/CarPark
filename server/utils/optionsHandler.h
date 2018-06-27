@@ -2,11 +2,11 @@
 	#define OPTIONSHANDLING_H_
 
 	#define DEFAULT_PARK_CONFIGFILE "conf/prk.cfg"
-	#define FILE_PATH_LENGHT 64
+	#define FILE_PATH_LENGTH 64
 
   	// Structure for the arguments parsing. Will be filled by optionsHandler()
 	typedef struct {
-		char parkingServerCfgFile[FILE_PATH_LENGHT];
+		char parkingServerCfgFile[FILE_PATH_LENGTH];
 	}configuration;
 
 	// Statup arguments handling
