@@ -13,7 +13,7 @@ server: main.c parkingManager.c configServer.c\
 	$(CC) -o $@ $^ -lrt -lm
 
 clean:  
-	rm -rfv *.o *~ $(TARGETS) *.dSYM
+	rm -rfv *.o *~ $(TARGETS) *.dSYM core
 
 test: all
 	./server

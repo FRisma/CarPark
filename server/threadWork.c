@@ -54,7 +54,18 @@ void* threadWork(void *data) {
 		free(req);
 		pthread_exit(NULL);
 	}
+	result->id 			= -1;
+	result->available 		= true;
+	result->floor 			= 0;
+	result->offset 		= 0;
+	result->checkInTime 	= NULL;
+	result->checkOutTime 	= NULL;
 	memset(result,'\0',1*sizeof(result));
+	memset(result->bill,'\0',16*sizeof(char));
+	memset(result->idCli,'\0',10*sizeof(char));
+	strncpy(result->bill,"$0",2);
+	strncpy(result->idCli,"-1",2);
+	result->next 			= NULL;
 	
 	switch (req->method) {
 		case POST:

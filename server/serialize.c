@@ -19,19 +19,12 @@ int serialize(slot s, char *stream) {
 	int d_offset 			= floor(log10(abs(s.offset))) + 1;
 	char displayInTime[80]	= {'\0'};
 	char displayOutTime[80]	= {'\0'};
-	if (s.checkInTime) {
-		//strftime(displayInTime,80,"%x - %I:%M%p", s.checkInTime);
-		asctime_r(s.checkInTime,displayInTime);			// Thread safe
-		displayInTime[strlen(displayInTime) -1] = '\0'; // Replace last char whis is \n with \0 to avoid line break
-	} else {
-		strncpy(displayInTime,"00:00\0",80);
-	}
-	if (s.checkOutTime) {
-		asctime_r(s.checkInTime,displayOutTime);		  // Thread safe
-		displayOutTime[strlen(displayOutTime) -1] = '\0'; // Replace last char whis is \n with \0 to avoid line break
-	} else {
-		strncpy(displayOutTime,"00:00\0",80);
-	}
+	
+	if (NULL != s.checkInTime) {strftime(displayInTime, sizeof(displayInTime), "%c", s.checkInTime);}
+	else { strncpy(displayInTime,"00:00",5);}
+	if (NULL != s.checkOutTime) {strftime(displayOutTime, sizeof(displayOutTime), "%c", s.checkOutTime); }
+	else {strncpy(displayOutTime,"00:00",5);}
+
 	if (debug) {
 		puts("serialize node:");
 		printLocation(&s);
