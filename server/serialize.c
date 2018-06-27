@@ -9,7 +9,7 @@
 
 char * const kPattern = "#:%li|a:%d|c:%s|f:%d|o:%lu|i:%s|t:%s|b:%s";
 
-#define debug 1
+#define debug 0
 
 int serialize(slot s, char *stream) {
 

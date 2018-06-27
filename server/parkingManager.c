@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define debug 1
+#define debug 0
 
 int parkingManager(char *configFile) {
 

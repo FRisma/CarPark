@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#define debug 1
+#define debug 0
 
 /*
  * El resultado podria ser un puntero al nodo que se reserva

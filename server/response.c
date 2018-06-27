@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define debug 1
+#define debug 0
 
 const char * kMessageFor200 = "OK";
 const char * kMessageFor201 = "Created";

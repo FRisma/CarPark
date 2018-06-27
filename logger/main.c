@@ -11,7 +11,8 @@
 #define MSG_MAX_SIZE 1024
 #define MSG_MAX_POOL 10
 #define MSG_KEY_STOP "__STOP__LOGGING__"
-#define debug 1
+
+#define debug 0
 
 const char * kMessageQueueName = "carpark_log_queue";
 

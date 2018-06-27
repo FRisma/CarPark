@@ -7,7 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define debug 1
+#define debug 0
 
 const char *kct			=	"Content-Type";
 const char *kcl			=	"Content-Length";

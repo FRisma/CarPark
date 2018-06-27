@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define debug 1
+#define debug 0
 
 int status(struct slot *start, struct slot *result, long int nodeId) {
 
