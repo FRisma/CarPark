@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#define debug 0
+#define debug 1
 
 void* threadWork(void *data) {
 
@@ -54,7 +54,7 @@ void* threadWork(void *data) {
 		free(req);
 		pthread_exit(NULL);
 	}
-	result->id 			= -1;
+	result->id 			= 0;
 	result->available 		= true;
 	result->floor 			= 0;
 	result->offset 		= 0;

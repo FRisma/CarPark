@@ -6,10 +6,11 @@
 #include <string.h>
 #include <ctype.h>
 
-#define debug 0
+#define debug 1
 
 long int slotIdFromURI(char *uri) {
 
+	if(debug) printf("slotFromURI la URI es %s\n",uri);
 	char *result, *ptr;
 	result = strtok_r(uri,"/",&ptr);
 	result = strtok_r(NULL,"/",&ptr);
@@ -20,11 +21,14 @@ long int slotIdFromURI(char *uri) {
 		size_t i=0;
 		for (i=0;i<strlen(result);i++) {
 			if (!isdigit(result[i])) {
+				puts("No digit found");
 				return -1;
 			}
 		}
+		puts("Digit found");
 		return atol(result);
 	} else {
+		puts("Bad request");
 		return -1;
 	}
 

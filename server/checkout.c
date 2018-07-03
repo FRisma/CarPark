@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <time.h>
 
-#define debug 0
+#define debug 1
 
 int checkout(struct slot *start, struct slot *result, pthread_mutex_t *mutex) {
 

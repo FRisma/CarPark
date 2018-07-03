@@ -7,7 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define debug 0
+#define debug 1
 
 const char *kct			=	"Content-Type";
 const char *kcl			=	"Content-Length";
@@ -101,8 +101,11 @@ int parseMethodAndResource(char *line, http_methods *method, char *resource) {
 	else 															{ write(STDERR_FILENO,"no HTTP method detected\n",24); return -1; }
 
 	/* Resource */
+	memset(resource,'\0',255);
 	tmp = strtok_r(NULL," ",&ptr);
-	strncpy(resource,tmp,strlen(tmp));
+	printf("El recurso antes de parsear es %s\n",tmp);
+	strncpy(resource,tmp,strnlen(tmp,12));
+	printf("El recurso parseado es %s\n",resource);
 	
 	return 0;
 }

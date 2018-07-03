@@ -34,8 +34,8 @@ int deserialize(char *stream, slot *result) {
 
 int parseToken(char *token, slot *result) {
 	char *key, *value, *ptr = NULL;
-	key 	= strtok_r(token,":",&ptr);
-	value 	= strtok_r(NULL,":",&ptr);
+	key 	= strtok_r(token,"-",&ptr);
+	value 	= strtok_r(NULL,"-",&ptr);
 
 	if (key == NULL || value == NULL) {
 		puts("No se encontro una key o un value valido para el token");

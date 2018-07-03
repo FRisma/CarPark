@@ -7,7 +7,7 @@
 #include <math.h>
 #include <unistd.h>
 
-char * const kPattern = "#:%li|a:%d|c:%s|f:%d|o:%lu|i:%s|t:%s|b:%s";
+char * const kPattern = "#-%li|a-%d|c-%s|f-%d|o-%lu|i-%s|t-%s|b-%s";
 
 #define debug 0
 

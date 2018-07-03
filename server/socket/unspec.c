@@ -17,7 +17,7 @@ int unspec(int *sd,const char *puerto){
 	
     if (debug) printf("\nUNSPEC.C\nPuerto:%s\n",puerto);
 
-	struct addrinfo hints, *res, *ptr;
+	struct addrinfo hints, *res;
 	int opc = 1;
 
 	memset(&hints,0,sizeof(struct addrinfo));	
@@ -32,20 +32,22 @@ int unspec(int *sd,const char *puerto){
 	}
 
 
-	for ( ptr = res; ptr != NULL; ptr = ptr->ai_next ){
-		*sd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+	//for ( ptr = res; ptr != NULL; ptr = ptr->ai_next ){
+		*sd = socket(hints.ai_family, hints.ai_socktype, hints.ai_protocol);
 		if (*sd < 0){
 			perror("socket unspec");
-			continue;
+			//continue;
 		}
 		if (setsockopt(*sd,SOL_SOCKET,SO_REUSEADDR,&opc,sizeof opc) < 0){
 			perror("setsockopt");
 		}
-		if (bind(*sd, ptr->ai_addr, ptr->ai_addrlen) == 0)
+		if (bind(*sd,(struct sockaddr *)&hints,sizeof hints) == 0) {
+//if (bind(*sd, ptr->ai_addr, ptr->ai_addrlen) == 0)
 			return 0; //Exitoso!
-        else
-            perror("unspec:bind");
-	}
+		}
+        //else
+        //    perror("unspec:bind");
+	//}
 	close(*sd);
 	return -1;
 }
