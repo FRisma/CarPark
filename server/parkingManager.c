@@ -20,7 +20,6 @@ int parkingManager(char *configFile) {
 		perror("No se pudo configurar el servidor");
 		return -1;
 	}
-	//srvConf->protocol = 4; // Esto deberia ser parametrizable
 
 	// Creo el socket
 	if ( 0 > protocol_handler(atoi(srvConf->protocol), &srvConf->socketDescriptor, srvConf->port) ) {
