@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#define debug 0
+#define debug 1
 
 /*
  * El resultado podria ser un puntero al nodo que se reserva
@@ -32,6 +32,7 @@ int checkin(struct slot *start, struct slot *result, pthread_mutex_t *mutex) {
 		if (true == node->available) {
 			time_t *rawtime = (time_t *)malloc(sizeof(time_t));
 			time(rawtime);
+			//localtime_r(rawtime,result->checkInTime);
 			node->checkInTime 		= 	localtime(rawtime);
 			node->available 		= 	false;
 			node->checkOutTime 		= 	NULL;

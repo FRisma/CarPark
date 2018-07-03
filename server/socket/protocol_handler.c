@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define debug 1
+#define debug 0
 
 int protocol_handler(int protoId,int *sd,char *port){
 

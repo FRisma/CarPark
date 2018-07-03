@@ -26,9 +26,12 @@ int checkout(struct slot *start, struct slot *result, pthread_mutex_t *mutex) {
 			result->floor 			= 	node->floor;
 			result->offset 			= 	node->offset;
 			result->checkInTime 	= 	node->checkInTime;
-			result->checkOutTime 	= 	localtime(rawtime);
-			strcpy(result->idCli,node->idCli);
-			strcpy(result->bill,node->bill);
+			printf("La hora de entrada fue %s\n",asctime(result->checkInTime));
+			localtime_r(rawtime,result->checkOutTime);
+			strncpy(result->idCli,node->idCli,10);
+			strncpy(result->bill,node->bill,16);
+			printf("La hora de salida fue %s\n",asctime(result->checkOutTime));
+			
 			// Make the node available again
 			node->available 		= 	true;
 			node->checkInTime		= 	NULL;

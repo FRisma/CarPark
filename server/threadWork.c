@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#define debug 1
+#define debug 0
 
 void* threadWork(void *data) {
 
@@ -59,7 +59,7 @@ void* threadWork(void *data) {
 	result->floor 			= 0;
 	result->offset 		= 0;
 	result->checkInTime 	= NULL;
-	result->checkOutTime 	= NULL;
+	result->checkOutTime 	= (time_t *)malloc(sizeof(time_t));
 	memset(result,'\0',1*sizeof(result));
 	memset(result->bill,'\0',16*sizeof(char));
 	memset(result->idCli,'\0',10*sizeof(char));

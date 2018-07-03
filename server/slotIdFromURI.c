@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define debug 1
+#define debug 0
 
 long int slotIdFromURI(char *uri) {
 
