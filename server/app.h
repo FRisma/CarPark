@@ -29,7 +29,7 @@
 
 	// Estructura de configuracion del server
 	typedef struct {
-		int protocol;
+		char protocol[2];
 		int socketDescriptor;
 		char mqName[MAX_MQ_NAME_LENGTH];
 		char port[MAX_PORT_LENGTH];
@@ -51,7 +51,7 @@
 	int parkingManager(char *configFile);
 
 	/* Abre el archivo de configuracion y parsea la informacion para escribir el resultado en port y mqName */
-	int configServer(char *cfgfile, char *port, char *mqName);
+	int configServer(char *cfgfile, char *protocol, char *port, char *mqName);
 
 	/* Create a linked list for the slots */
 	int createLocations(slot **startingNode);

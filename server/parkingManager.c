@@ -15,15 +15,15 @@ int parkingManager(char *configFile) {
 	if (debug) printf("Archivo de configuracion %s\n", configFile);
 	serverConf *srvConf = (serverConf *)malloc(sizeof(serverConf));
 
-	if ( 0 > configServer(configFile, srvConf->port,srvConf->mqName) ) {
+	if ( 0 > configServer(configFile,srvConf->protocol,srvConf->port,srvConf->mqName) ) {
 		free(srvConf);
 		perror("No se pudo configurar el servidor");
 		return -1;
 	}
-	srvConf->protocol = 4; // Esto deberia ser parametrizable
+	//srvConf->protocol = 4; // Esto deberia ser parametrizable
 
 	// Creo el socket
-	if ( 0 > protocol_handler(srvConf->protocol, &srvConf->socketDescriptor, srvConf->port) ) {
+	if ( 0 > protocol_handler(atoi(srvConf->protocol), &srvConf->socketDescriptor, srvConf->port) ) {
 		perror("No se pudo configurar el socket");
 		close(srvConf->socketDescriptor);
 		free(srvConf);
@@ -39,7 +39,7 @@ int parkingManager(char *configFile) {
 	}
 
 	//Iniciar el parking server
-	if (debug) printf("Starting parking server - Protocol: ipv%d, Socket:%d, Port:%s MQD:%d\n", srvConf->protocol, srvConf->socketDescriptor, srvConf->port, srvConf->mqd);
+	if (debug) printf("Starting parking server - Protocol: ipv%d, Socket:%d, Port:%s MQD:%d\n", atoi(srvConf->protocol), srvConf->socketDescriptor, srvConf->port, srvConf->mqd);
 	if ( 0 > runServer(srvConf) ) {
 		perror("Algo salio mal en runServer");
 		mq_close(srvConf->mqd);

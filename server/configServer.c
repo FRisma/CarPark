@@ -11,9 +11,9 @@
 #include <ctype.h>
 
 #define BUFF_SIZE 1024  //El tamaño debe ir acorde al tamanio del archivo que va a leer
-#define debug 0
+#define debug 1
 
-int configServer(char *cfgfile, char *port, char *mqName) {
+int configServer(char *cfgfile, char *proto, char *port, char *mqName) {
 
 	if (debug) printf("configServer - cfg: %s\n",cfgfile);
 
@@ -43,7 +43,7 @@ int configServer(char *cfgfile, char *port, char *mqName) {
 	mqName[strnlen(mqName,128)-1]='\0';
 	if (debug) printf("configServer - mqName: %s\n",mqName);
 
-	//Parse message queue name
+	//Parse port number
 	if (parse("port=[0-9]?[0-9]?[0-9]?[0-9]?[0-9](\\r|\\t|\\n|\\s)",buff,5,port) < 0){
 		perror("parse");
 		close(fd);
@@ -57,6 +57,20 @@ int configServer(char *cfgfile, char *port, char *mqName) {
 		close(fd);
 		return -1;
 	}
+
+	//Parse protocoi
+	if (parse("proto=[0-9](\\r|\\t|\\n|\\s)",buff,6,proto) < 0){
+		perror("parse");
+		close(fd);
+		return -1;
+	}
+	proto[strnlen(proto,2)-1]='\0';
+	if( atoi(proto) < 0 ) {
+		write(STDERR_FILENO,"wrong protocol specified, the socket will be created using unspec family\n",73);
+		proto="0";
+	}
+	if (debug) printf("configServer - protocol: %s\n",proto);
+
 	close(fd);
     
 	return 0;

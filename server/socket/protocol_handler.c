@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define debug 0
+#define debug 1
 
 int protocol_handler(int protoId,int *sd,char *port){
 
@@ -17,14 +17,16 @@ int protocol_handler(int protoId,int *sd,char *port){
 	
 	switch(protoId){
 			case 4:  //IPV4
+				if(debug) puts("Iniciando un socket de la familia ipv4");
 				if(ipv4(sd,port) < 0) return -1;
 				break;
 			case 6:  //IPV6
+				if(debug) puts("Iniciando un socket de la familia ipv6");
 				if (ipv6(sd,port) < 0) return -1;
 				break;
 			default:
+				if(debug) puts("Iniciando un socket del tipo unspec");
 				if(unspec(sd,port) < 0) return -1;
-				return -1;
 	}
 	return 0;
 }
